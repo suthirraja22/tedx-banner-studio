@@ -1,8 +1,8 @@
 <div align="center">
 
-# TEDx Banner & Event Collateral Studio
+# TEDx & Conference Banner Studio
 
-**A browser-native print & social media design engine built by the TEDx CS Academy Coimbatore Tech Team.**  
+**A configurable, browser-native print & social media collateral engine for TEDx chapters, university clubs, and tech conferences.**  
 Create print-ready roll-up standees, Instagram speaker reveals, 16:9 auditorium backdrops, and lanyard ID passes in seconds—with zero external dependencies.
 
 [![Live Demo](https://img.shields.io/badge/Live_Studio-GitHub_Pages-EB0028?style=for-the-badge&logo=github)](https://suthirraja22.github.io/tedx-banner-studio/)
@@ -11,7 +11,7 @@ Create print-ready roll-up standees, Instagram speaker reveals, 16:9 auditorium 
 
 <br />
 
-![TEDx Banner & Collateral Studio Preview](docs/studio-preview.png)
+![Studio Workspace Preview](docs/studio-preview.png)
 
 </div>
 
@@ -19,12 +19,19 @@ Create print-ready roll-up standees, Instagram speaker reveals, 16:9 auditorium 
 
 ## Overview
 
-Producing consistent, high-resolution speaker collateral across physical flex printers and social channels is a recurring bottleneck for student-run conferences. **TEDx Banner Studio** automates the entire visual system behind **TEDx CS Academy Coimbatore** directly in the browser:
+Originally engineered for the **TEDx CS Academy Coimbatore** tech team and generalized into a multi-chapter open-source studio, **TEDx & Conference Banner Studio** lets any organizing team configure their own event branding and produce print-shop-ready speaker assets directly in the browser:
 
-- **Instant Speaker Lineup Workflow** — Type speaker credentials or bulk-import a `.csv` roster, drop in raw headshots, and batch-export print-ready `.PNG` files.
-- **Automatic Studio Portrait Blending** — Converts any color headshot into a high-contrast monochrome TED-style portrait, clipped inside the lower geometric arc with smoothstep shoulder/edge feathering and bright-background knock-out.
-- **Dual Raster & Vector Pipeline** — Export ultra-high-resolution `.PNG` (`up to 3600 × 7200 px`), print-calibrated `.PDF` sheets, or **layered editable `.SVG` files** that open cleanly in **Figma, Adobe Illustrator, CorelDRAW, and Canva**.
-- **Physical Print-Shop Safeguards** — Toggleable bleed borders and a **3-inch roll-up standee cassette clamp guide** so critical content never gets swallowed by aluminum standee bases.
+- **Full Event & Brand Options Page (`O`)** — Customize your brand prefix & superscript (`TEDx`, `GDG`, `IEEE`, `DevSummit ’26`), switch between **Stacked** and **Inline** chapter lockups, pick fonts (`Inter`, `Helvetica Neue`, `Plus Jakarta Sans`, `Space Grotesk`), change brand accent & dark-arc colors, and export/import shareable `.json` brand configs for your team.
+- **1-Click Starter Templates** — Preloaded presets for **School / Youth TEDx**, **City TEDx**, **University Edition**, and **Tech Summits**, or build a custom identity from scratch.
+- **Instant Speaker Lineup & CSV Batch Mode** — Manage an entire speaker roster with avatar cards, bulk-import a `.csv` lineup, drop in raw headshots, and batch-export high-DPI `.PNG` banners.
+- **Automatic Studio Portrait Blending** — Converts everyday color headshots into high-contrast monochrome portraits clipped inside the lower geometric arc with smoothstep shoulder/edge feathering and bright-background knock-out.
+- **Dual Raster & Layered Vector Output** — Export ultra-high-resolution `.PNG` (`up to 3600 × 7200 px`), print-calibrated `.PDF` sheets, or **layered editable `.SVG` files** ready for **Figma, Adobe Illustrator, CorelDRAW, and Canva**.
+
+<div align="center">
+
+![Event & Brand Options Page](docs/options-preview.png)
+
+</div>
 
 ---
 
@@ -46,16 +53,16 @@ Producing consistent, high-resolution speaker collateral across physical flex pr
 1. **Chord-Constrained Arc Typography Solver**  
    Rather than wrapping text inside static rectangles that collide with curved boundaries, the layout engine evaluates the circular chord bound per line baseline:
    $$x_{\max}(y) = c_x + \sqrt{r^2 - (y - c_y)^2} - m$$
-   Paired with an iterative auto-fit solver, long speaker bios dynamically reflow and scale within the upper black arc across every aspect ratio without clipping.
+   Paired with an iterative auto-fit solver, long speaker bios dynamically reflow and scale within the upper arc across every aspect ratio without clipping.
 
 2. **Real-Time Offscreen Canvas Portrait Grading**  
-   Uploaded portraits pass through a cached offscreen `<canvas>` pixel pipeline applying monochrome contrast curves, luminance-threshold background keying, and an asymmetric radial smoothstep ($3t^2 - 2t^3$) vignette mask—preserving solid lower shoulders while melting outer photo edges seamlessly into `#080808`.
+   Uploaded portraits pass through a cached offscreen `<canvas>` pixel pipeline applying monochrome contrast curves, luminance-threshold background keying, and an asymmetric radial smoothstep ($3t^2 - 2t^3$) vignette mask—preserving solid lower shoulders while melting outer photo edges seamlessly into the dark arc surface.
 
 3. **Shared Deterministic Layout → Raster & Vector `.SVG` Serialization**  
    A single layout pass drives both the interactive 60 fps `<canvas>` stage and a standards-compliant XML `.SVG` serializer with `<clipPath>`, `<linearGradient>`, and grouped `<text>` layers—bridging automated tech workflows with manual graphic-design handoffs.
 
-4. **Zero Build Step, 100% Client-Side Privacy**  
-   Written in modular, dependency-free HTML5, CSS3, and ES2022 JavaScript. Speaker photos and CSV rosters are processed locally in browser memory and never uploaded to an external server.
+4. **Configurable Print-Shop Safeguards & Team `.JSON` Sync**  
+   Includes toggleable bleed guides, configurable roll-up standee cassette clamp margins (`0"`, `2.5"`, `3.0"`, `4.0"`), and portable JSON brand configs—all running 100% client-side with zero backend uploads.
 
 ---
 
@@ -71,11 +78,10 @@ python3 -m http.server 8080
 
 Then open **`http://localhost:8080`** in your browser.
 
-### Bulk CSV Workflow
-1. Prepare a CSV file with columns `name,bio,role,talkTitle` (see [`speakers_sample.csv`](speakers_sample.csv)).
-2. Click **CSV** in the **Speaker Lineup** bar to import all speakers at once.
-3. Drag and drop each speaker's photo directly onto the stage canvas.
-4. Click **Batch** to download print-ready `.PNG` banners for the entire roster.
+### Customizing for Your Event / Chapter
+1. Click **Event Options** in the top bar (or press `O`, or click the top-left event badge).
+2. Choose a **1-Click Starter Template** or customize your **Brand Prefix**, **Chapter Lines**, **Lockup Mode** (`Stacked` vs. `Inline`), **Typeface**, and **Accent Palette**.
+3. *(Optional)* Click **Export Config .JSON** to share your exact brand preset with teammates.
 
 ---
 
@@ -83,8 +89,9 @@ Then open **`http://localhost:8080`** in your browser.
 
 | Shortcut | Action |
 | :--- | :--- |
+| `O` | Open / Close **Event & Brand Options** page |
 | `1` – `6` | Switch between Standee, Social, Stage, and Badge formats |
-| `G` | Toggle Print Bleed & 3-inch Standee Roller Clamp Guides |
+| `G` | Toggle Print Bleed & Standee Roller Clamp Guides |
 | `R` | Re-center and reset portrait zoom |
 | `↑` `↓` `←` `→` | Fine-nudge speaker portrait position |
 | `⌘ / Ctrl + E` | Quick-export high-resolution `.PNG` |
@@ -96,12 +103,13 @@ Then open **`http://localhost:8080`** in your browser.
 
 ```text
 tedx-banner-studio/
-├── index.html                  # Studio workspace UI & semantic controls
-├── styles.css                  # Dark-room studio theme & responsive layout
-├── app.js                      # Arc-aware layout engine, pixel shader & SVG/PNG/PDF exporters
+├── index.html                  # Studio workspace & full Event/Brand Options dashboard
+├── styles.css                  # Dynamic CSS variable theme & responsive dark-room UI
+├── app.js                      # Configurable brand state, arc solver, pixel shader & exporters
 ├── speakers_sample.csv         # Sample bulk-import speaker lineup
-├── assets/                     # Fictional studio showcase speaker portraits
+├── assets/                     # Synthetic studio showcase speaker portraits
 ├── templates/                  # Standalone editable vector .SVG templates for Figma/Illustrator
+├── docs/                       # Interface preview screenshots
 ├── scripts/
 │   └── generate_templates.py   # Utility script to regenerate base .SVG artboards
 └── .github/workflows/

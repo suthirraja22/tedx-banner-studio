@@ -1,6 +1,7 @@
 /**
- * TEDx CS Academy Coimbatore — Speaker Banner & Event Collateral Studio
- * Open-source client-side design & print-production engine (Canvas + Layered SVG + PDF).
+ * TEDx & Conference Banner Studio — Configurable Event Collateral Engine
+ * Supports any TEDx chapter, university society, city edition, or tech summit
+ * via the built-in Event & Brand Options page + shareable JSON brand configs.
  */
 
 const FORMAT_KEYS = [
@@ -20,7 +21,7 @@ const FORMATS = {
     h: 3600,
     phys: '36 × 72 in Print',
     mode: 'standee',
-    rollerRatio: 3 / 72
+    hasRoller: true
   },
   standee_25x6: {
     id: 'standee_25x6',
@@ -29,7 +30,7 @@ const FORMATS = {
     h: 3600,
     phys: '30 × 72 in Print',
     mode: 'standee_narrow',
-    rollerRatio: 3 / 72
+    hasRoller: true
   },
   ig_post: {
     id: 'ig_post',
@@ -38,7 +39,7 @@ const FORMATS = {
     h: 1350,
     phys: 'Social Feed Portrait',
     mode: 'social_4x5',
-    rollerRatio: 0
+    hasRoller: false
   },
   ig_story: {
     id: 'ig_story',
@@ -47,7 +48,7 @@ const FORMATS = {
     h: 1920,
     phys: 'Vertical Story / Reel',
     mode: 'story_9x16',
-    rollerRatio: 0
+    hasRoller: false
   },
   backdrop_16x9: {
     id: 'backdrop_16x9',
@@ -56,7 +57,7 @@ const FORMATS = {
     h: 1080,
     phys: 'HD LED / Projector',
     mode: 'landscape',
-    rollerRatio: 0
+    hasRoller: false
   },
   badge_id: {
     id: 'badge_id',
@@ -65,7 +66,74 @@ const FORMATS = {
     h: 1500,
     phys: '3.5 × 5 in Pass (300 DPI)',
     mode: 'badge',
-    rollerRatio: 0
+    hasRoller: false
+  }
+};
+
+const CHAPTER_PRESETS = {
+  csa: {
+    chapterPreset: 'csa',
+    brandMain: 'TED',
+    brandSup: 'x',
+    lockupMode: 'stacked',
+    orgLine1: 'CS Academy',
+    orgLine2: 'Coimbatore',
+    eventTheme: '',
+    showTedFooter: false,
+    footerText: 'x = independently organized TED event',
+    fontFamily: 'Inter',
+    accentRed: '#EB0028',
+    circleBg: '#080808',
+    filePrefix: 'tedx-csa',
+    rollerInches: 3
+  },
+  city: {
+    chapterPreset: 'city',
+    brandMain: 'TED',
+    brandSup: 'x',
+    lockupMode: 'inline',
+    orgLine1: 'Bengaluru',
+    orgLine2: '',
+    eventTheme: 'IDEAS WORTH SPREADING',
+    showTedFooter: true,
+    footerText: 'x = independently organized TED event',
+    fontFamily: 'Helvetica Neue',
+    accentRed: '#EB0028',
+    circleBg: '#080808',
+    filePrefix: 'tedx-blr',
+    rollerInches: 3
+  },
+  university: {
+    chapterPreset: 'university',
+    brandMain: 'TED',
+    brandSup: 'x',
+    lockupMode: 'stacked',
+    orgLine1: 'IIT Madras',
+    orgLine2: 'Chennai',
+    eventTheme: '',
+    showTedFooter: true,
+    footerText: 'x = independently organized TED event',
+    fontFamily: 'Plus Jakarta Sans',
+    accentRed: '#E62B1E',
+    circleBg: '#080808',
+    filePrefix: 'tedx-iitm',
+    rollerInches: 3
+  },
+  summit: {
+    chapterPreset: 'summit',
+    brandMain: 'DevSummit',
+    brandSup: '’26',
+    lockupMode: 'stacked',
+    orgLine1: 'Open Source & AI',
+    orgLine2: 'Annual Conference',
+    eventTheme: 'BUILD • SCALE • SHIP',
+    showTedFooter: true,
+    footerText: 'devsummit.org • #DevSummit26',
+    fontFamily: 'Space Grotesk',
+    accentRed: '#2563EB',
+    circleBg: '#0f172a',
+    filePrefix: 'devsummit-26',
+    rollerInches: 3
   }
 };
 
@@ -105,7 +173,7 @@ const DEMO_SPEAKERS = [
   {
     id: 'demo_vikram',
     name: 'Prof. Vikram\nSundaram',
-    bio: 'Astrophysicist and Science Communicator building low-cost community radio telescope arrays for high-school classrooms across Tamil Nadu.',
+    bio: 'Astrophysicist and Science Communicator building low-cost community radio telescope arrays for high-school classrooms across India.',
     role: 'SPEAKER',
     talkTitle: 'Listening to Distant Worlds',
     photoDataUrl: '',
@@ -120,23 +188,39 @@ const DEMO_SPEAKERS = [
   }
 ];
 
-const STORAGE_KEY = 'tedx_csa_banner_studio_v2';
+const STORAGE_KEY = 'tedx_configurable_banner_studio_v3';
 
 const state = {
+  activeView: 'studio',
   format: 'standee_3x6',
   arcPreset: 'classic',
   showGuides: false,
   viewZoom: 1.0,
+
+  // Configurable Event & Brand Options
+  chapterPreset: 'csa',
+  brandMain: 'TED',
+  brandSup: 'x',
+  lockupMode: 'stacked',
   orgLine1: 'CS Academy',
   orgLine2: 'Coimbatore',
+  eventTheme: '',
   showRoleOnAll: false,
   showTedFooter: false,
+  footerText: 'x = independently organized TED event',
+  fontFamily: 'Inter',
+  accentRed: '#EB0028',
+  circleBg: '#080808',
+  filePrefix: 'tedx-csa',
+  rollerInches: 3,
+
+  // Layout Scales
   nameSize: 100,
   bioSize: 100,
   waistGap: 0,
   arcSpin: 0,
-  accentRed: '#EB0028',
   exportScale: 1,
+
   speakers: structuredClone(DEMO_SPEAKERS),
   activeSpeakerIndex: 0
 };
@@ -153,6 +237,36 @@ function currentSpeaker() {
   return state.speakers[state.activeSpeakerIndex] || state.speakers[0];
 }
 
+function getFontStack() {
+  const f = state.fontFamily || 'Inter';
+  if (f === 'Helvetica Neue') return '"Helvetica Neue", Helvetica, Arial, sans-serif';
+  return `"${f}", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif`;
+}
+
+function getFullEventName() {
+  const mark = `${state.brandMain || ''}${state.brandSup || ''}`.trim();
+  const sub = [state.orgLine1, state.orgLine2].map(s => (s || '').trim()).filter(Boolean).join(' ');
+  return [mark, sub].filter(Boolean).join(' ') || 'Event Banner Studio';
+}
+
+function hexToRgba(hex, alpha) {
+  const clean = (hex || '#EB0028').replace('#', '');
+  const num = parseInt(clean.length === 3 ? clean.split('').map(c => c + c).join('') : clean, 16) || 0xeb0028;
+  const r = (num >> 16) & 255;
+  const g = (num >> 8) & 255;
+  const b = num & 255;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function syncCssAccentTheme() {
+  const root = document.documentElement;
+  const col = state.accentRed || '#EB0028';
+  root.style.setProperty('--ted-red', col);
+  root.style.setProperty('--ted-red-hover', col);
+  root.style.setProperty('--border-focus', col);
+  root.style.setProperty('--ted-red-soft', hexToRgba(col, 0.15));
+}
+
 function showToast(msg) {
   const el = document.getElementById('toast');
   el.textContent = msg;
@@ -166,6 +280,7 @@ function saveState() {
   try {
     const serializable = {
       ...state,
+      activeView: 'studio',
       speakers: state.speakers.map(s => ({
         ...s,
         photoDataUrl: s.photoDataUrl && (s.photoDataUrl.startsWith('assets/') || s.photoDataUrl.length < 1_500_000)
@@ -184,14 +299,35 @@ function loadSavedState() {
     const parsed = JSON.parse(raw);
     if (parsed && Array.isArray(parsed.speakers) && parsed.speakers.length > 0) {
       Object.assign(state, parsed);
+      state.activeView = 'studio';
       state.activeSpeakerIndex = Math.min(state.activeSpeakerIndex || 0, state.speakers.length - 1);
       state.viewZoom = Number(state.viewZoom) || 1.0;
-      state.arcPreset = state.arcPreset || 'classic';
     }
   } catch (_) {}
 }
 
-/* ---------------- Image Loading & Studio Portrait Processing ---------------- */
+/* ---------------- View Switching (Studio <-> Options Page) ---------------- */
+function setView(viewName) {
+  state.activeView = viewName === 'options' ? 'options' : 'studio';
+  const isOptions = state.activeView === 'options';
+
+  document.getElementById('studioWorkspace').classList.toggle('hidden', isOptions);
+  document.getElementById('optionsPage').classList.toggle('active', isOptions);
+  document.getElementById('openOptionsBtn').classList.toggle('active', isOptions);
+  document.getElementById('openOptionsBtnLabel').textContent = isOptions ? '← Back to Studio' : 'Event Options';
+
+  if (isOptions) {
+    updateOptionsLivePreview();
+  } else {
+    renderPreview();
+  }
+}
+
+function toggleOptionsView() {
+  setView(state.activeView === 'options' ? 'studio' : 'options');
+}
+
+/* ---------------- Image Loading & Portrait Processing ---------------- */
 function loadImage(src) {
   if (!src) return Promise.resolve(null);
   if (imageCache.has(src)) return Promise.resolve(imageCache.get(src));
@@ -382,7 +518,6 @@ function computeGeometry(W, H, mode) {
     };
   }
 
-  // Reference 3 x 6 ft Standee (1800 x 3600)
   return {
     isLandscape: false,
     upper: {
@@ -445,22 +580,25 @@ function renderScene(targetCtx, W, H, fmt, spk, includeGuides = false) {
   const geom = computeGeometry(W, H, fmt.mode);
   const u = geom.upper;
   const l = geom.lower;
+  const fontStack = getFontStack();
+  const darkSurface = state.circleBg || '#080808';
+  const rollerRatio = fmt.hasRoller ? (Number(state.rollerInches) || 0) / 72 : 0;
 
   targetCtx.save();
   targetCtx.clearRect(0, 0, W, H);
 
-  // 1. Solid TED Red Background
-  targetCtx.fillStyle = state.accentRed;
+  // 1. Primary Accent Background
+  targetCtx.fillStyle = state.accentRed || '#EB0028';
   targetCtx.fillRect(0, 0, W, H);
 
-  // 2. Upper Black Circle
-  targetCtx.fillStyle = '#080808';
+  // 2. Upper Geometric Arc
+  targetCtx.fillStyle = darkSurface;
   targetCtx.beginPath();
   targetCtx.arc(u.cx, u.cy, u.r, 0, Math.PI * 2);
   targetCtx.fill();
 
-  // 3. Lower Black Circle
-  targetCtx.fillStyle = '#080808';
+  // 3. Lower Geometric Arc
+  targetCtx.fillStyle = darkSurface;
   targetCtx.beginPath();
   targetCtx.arc(l.cx, l.cy, l.r, 0, Math.PI * 2);
   targetCtx.fill();
@@ -484,62 +622,120 @@ function renderScene(targetCtx, W, H, fmt, spk, includeGuides = false) {
     );
 
     const bGrad = targetCtx.createLinearGradient(0, H * 0.90, 0, H);
-    bGrad.addColorStop(0, 'rgba(8,8,8,0)');
-    bGrad.addColorStop(1, 'rgba(8,8,8,0.72)');
+    bGrad.addColorStop(0, hexToRgba(darkSurface, 0));
+    bGrad.addColorStop(1, hexToRgba(darkSurface, 0.74));
     targetCtx.fillStyle = bGrad;
     targetCtx.fillRect(0, H * 0.90, W, H * 0.10);
   } else {
-    drawPortraitPlaceholder(targetCtx, l, W, H);
+    drawPortraitPlaceholder(targetCtx, l, W, H, fontStack);
   }
   targetCtx.restore();
 
-  // 5. Typography Layout Metrics
+  // 5. Typography & Dynamic Brand Lockup
   const unit = geom.isLandscape ? H : W;
   const padLeft = geom.isLandscape ? W * 0.055 : W * 0.058;
-  let cursorY = geom.isLandscape ? H * 0.095 : fmt.mode === 'badge' ? H * 0.085 : H * 0.028;
+  let cursorY = geom.isLandscape ? H * 0.092 : fmt.mode === 'badge' ? H * 0.085 : H * 0.028;
 
   if (fmt.mode === 'badge') {
-    targetCtx.fillStyle = '#1b1b20';
+    targetCtx.fillStyle = '#1b1b22';
     roundRect(targetCtx, W * 0.41, H * 0.026, W * 0.18, H * 0.022, H * 0.011);
     targetCtx.fill();
   }
 
-  // 5a. TEDx Logo Lockup
-  const tedSize = Math.round(unit * (geom.isLandscape ? 0.082 : fmt.mode === 'social_4x5' ? 0.078 : 0.082));
-  targetCtx.fillStyle = state.accentRed;
-  targetCtx.font = `900 ${tedSize}px Inter, "Helvetica Neue", Arial, sans-serif`;
+  // 5a. Configurable Brand Mark + Stacked or Inline Chapter Lockup
+  const tedSize = Math.round(unit * (geom.isLandscape ? 0.080 : fmt.mode === 'social_4x5' ? 0.076 : 0.080));
+  const subSize = Math.round(unit * (geom.isLandscape ? 0.048 : fmt.mode === 'social_4x5' ? 0.048 : 0.052));
   targetCtx.textBaseline = 'top';
 
-  const tedLetters = ['T', 'E', 'D'];
+  const brandMainStr = (state.brandMain || '').trim();
+  const brandSupStr = (state.brandSup || '').trim();
+  const line1Str = (state.orgLine1 || '').trim();
+  const line2Str = (state.orgLine2 || '').trim();
+
   let lx = padLeft;
-  for (const ch of tedLetters) {
-    targetCtx.fillText(ch, lx, cursorY);
-    lx += targetCtx.measureText(ch).width - tedSize * 0.055;
+  const markStartY = cursorY;
+
+  if (brandMainStr) {
+    targetCtx.fillStyle = state.accentRed;
+    targetCtx.font = `900 ${tedSize}px ${fontStack}`;
+    // Tight authentic tracking when rendering TED
+    if (brandMainStr.toUpperCase() === 'TED') {
+      for (const ch of brandMainStr) {
+        targetCtx.fillText(ch, lx, cursorY);
+        lx += targetCtx.measureText(ch).width - tedSize * 0.055;
+      }
+    } else {
+      targetCtx.fillText(brandMainStr, lx, cursorY);
+      lx += targetCtx.measureText(brandMainStr).width;
+    }
   }
-  const xSize = Math.round(tedSize * 0.64);
-  targetCtx.font = `900 ${xSize}px Inter, "Helvetica Neue", Arial, sans-serif`;
-  targetCtx.fillText('x', lx + tedSize * 0.02, cursorY + tedSize * 0.02);
 
-  cursorY += tedSize * 1.02;
-
-  // 5b. Event Subtitle Lines
-  const subSize = Math.round(unit * (geom.isLandscape ? 0.048 : fmt.mode === 'social_4x5' ? 0.048 : 0.053));
-  targetCtx.fillStyle = '#f5f5f7';
-  targetCtx.font = `300 ${subSize}px Inter, "Helvetica Neue", Arial, sans-serif`;
-
-  if (state.orgLine1.trim()) {
-    targetCtx.fillText(state.orgLine1.trim(), padLeft, cursorY);
-    cursorY += subSize * 1.05;
+  if (brandSupStr) {
+    const xSize = Math.round(tedSize * 0.62);
+    targetCtx.fillStyle = state.accentRed;
+    targetCtx.font = `900 ${xSize}px ${fontStack}`;
+    targetCtx.fillText(brandSupStr, lx + tedSize * 0.02, cursorY + tedSize * 0.02);
+    lx += targetCtx.measureText(brandSupStr).width + tedSize * 0.04;
   }
-  if (state.orgLine2.trim()) {
-    targetCtx.fillText(state.orgLine2.trim(), padLeft, cursorY);
-    cursorY += subSize * 1.18;
+
+  const svgOrgElements = [];
+
+  if (state.lockupMode === 'inline' && line1Str) {
+    // Classic inline single-line TEDxChapter style
+    const inlineSize = Math.round(tedSize * 0.72);
+    const inlineY = cursorY + Math.round((tedSize - inlineSize) * 0.78);
+    targetCtx.fillStyle = '#f5f5f7';
+    targetCtx.font = `400 ${inlineSize}px ${fontStack}`;
+    const inlineX = lx + tedSize * 0.08;
+    targetCtx.fillText(line1Str, inlineX, inlineY);
+    svgOrgElements.push({ text: line1Str, x: inlineX, y: inlineY, size: inlineSize, weight: 400 });
+    cursorY += tedSize * 1.06;
+
+    if (line2Str) {
+      targetCtx.font = `300 ${subSize}px ${fontStack}`;
+      targetCtx.fillText(line2Str, padLeft, cursorY);
+      svgOrgElements.push({ text: line2Str, x: padLeft, y: cursorY, size: subSize, weight: 300 });
+      cursorY += subSize * 1.15;
+    } else {
+      cursorY += subSize * 0.22;
+    }
+  } else {
+    // Stacked multi-line chapter lockup
+    if (brandMainStr || brandSupStr) {
+      cursorY += tedSize * 1.02;
+    }
+    targetCtx.fillStyle = '#f5f5f7';
+    targetCtx.font = `300 ${subSize}px ${fontStack}`;
+    if (line1Str) {
+      targetCtx.fillText(line1Str, padLeft, cursorY);
+      svgOrgElements.push({ text: line1Str, x: padLeft, y: cursorY, size: subSize, weight: 300 });
+      cursorY += subSize * 1.05;
+    }
+    if (line2Str) {
+      targetCtx.fillText(line2Str, padLeft, cursorY);
+      svgOrgElements.push({ text: line2Str, x: padLeft, y: cursorY, size: subSize, weight: 300 });
+      cursorY += subSize * 1.16;
+    } else if (line1Str) {
+      cursorY += subSize * 0.14;
+    }
+  }
+
+  // Optional Global Event Theme Header Line
+  let renderedEventTheme = null;
+  if (state.eventTheme && state.eventTheme.trim()) {
+    const themeSz = Math.round(unit * 0.022);
+    targetCtx.font = `700 ${themeSz}px ${fontStack}`;
+    targetCtx.fillStyle = state.accentRed;
+    const tStr = state.eventTheme.trim();
+    targetCtx.fillText(tStr, padLeft, cursorY);
+    renderedEventTheme = { text: tStr, x: padLeft, y: cursorY, size: themeSz };
+    cursorY += Math.round(themeSz * 1.65);
   }
 
   // Optional Role Pill
   if (state.showRoleOnAll && fmt.mode !== 'badge' && spk.role.trim()) {
     const pillFontSize = Math.round(unit * 0.025);
-    targetCtx.font = `700 ${pillFontSize}px Inter, sans-serif`;
+    targetCtx.font = `700 ${pillFontSize}px ${fontStack}`;
     const label = spk.role.trim().toUpperCase();
     const pw = targetCtx.measureText(label).width + pillFontSize * 1.3;
     const ph = pillFontSize * 1.6;
@@ -548,14 +744,14 @@ function renderScene(targetCtx, W, H, fmt, spk, includeGuides = false) {
     targetCtx.fill();
     targetCtx.fillStyle = '#ffffff';
     targetCtx.fillText(label, padLeft + pillFontSize * 0.65, cursorY + pillFontSize * 0.3);
-    cursorY += ph + subSize * 0.3;
+    cursorY += ph + subSize * 0.28;
   }
 
   // 5c. Speaker Name
   const baseNameSize = unit * (geom.isLandscape ? 0.084 : fmt.mode === 'social_4x5' ? 0.080 : 0.094);
   const nameFontSize = Math.round(baseNameSize * (state.nameSize / 100));
   const nameLineHeight = Math.round(nameFontSize * 1.04);
-  const nameFont = `800 ${nameFontSize}px Inter, "Helvetica Neue", Arial, sans-serif`;
+  const nameFont = `800 ${nameFontSize}px ${fontStack}`;
 
   const rawNameLines = (spk.name || 'Speaker Name').split('\n');
   const renderedNameLines = [];
@@ -587,7 +783,7 @@ function renderScene(targetCtx, W, H, fmt, spk, includeGuides = false) {
   let renderedTalkLine = null;
   if (spk.talkTitle && spk.talkTitle.trim()) {
     const talkSize = Math.round(unit * 0.030 * (state.bioSize / 100));
-    targetCtx.font = `600 ${talkSize}px Inter, sans-serif`;
+    targetCtx.font = `600 ${talkSize}px ${fontStack}`;
     targetCtx.fillStyle = state.accentRed;
     targetCtx.fillText(spk.talkTitle.trim(), padLeft, cursorY);
     renderedTalkLine = { text: spk.talkTitle.trim(), x: padLeft, y: cursorY, size: talkSize };
@@ -597,13 +793,13 @@ function renderScene(targetCtx, W, H, fmt, spk, includeGuides = false) {
   // 5d. Speaker Bio (Arc-aware + Smart Auto-Fit inside upper circle)
   const baseBioSize = unit * (geom.isLandscape ? 0.028 : fmt.mode === 'social_4x5' ? 0.028 : 0.0305);
   let bioFontSize = Math.round(baseBioSize * (state.bioSize / 100));
-  const minBioFontSize = Math.max(10, Math.round(bioFontSize * 0.60));
+  const minBioFontSize = Math.max(10, Math.round(bioFontSize * 0.58));
   const maxBioBottomY = u.cy + u.r - unit * 0.032;
   let bioLines = [];
 
   while (bioFontSize >= minBioFontSize) {
     const bioLineHeight = Math.round(bioFontSize * 1.34);
-    const bioFont = `400 ${bioFontSize}px Inter, "Helvetica Neue", Arial, sans-serif`;
+    const bioFont = `400 ${bioFontSize}px ${fontStack}`;
     bioLines = wrapArcParagraph(
       targetCtx,
       spk.bio,
@@ -621,7 +817,7 @@ function renderScene(targetCtx, W, H, fmt, spk, includeGuides = false) {
     bioFontSize -= Math.max(1, Math.round(unit * 0.0014));
   }
 
-  targetCtx.font = `400 ${bioFontSize}px Inter, "Helvetica Neue", Arial, sans-serif`;
+  targetCtx.font = `400 ${bioFontSize}px ${fontStack}`;
   targetCtx.fillStyle = 'rgba(244, 244, 246, 0.90)';
   for (const bl of bioLines) {
     if (bl.y + bioFontSize <= maxBioBottomY + bioFontSize * 0.25) {
@@ -635,7 +831,7 @@ function renderScene(targetCtx, W, H, fmt, spk, includeGuides = false) {
     targetCtx.fillStyle = state.accentRed;
     targetCtx.fillRect(0, H - barH, W, barH);
     const rSize = Math.round(W * 0.058);
-    targetCtx.font = `900 ${rSize}px Inter, sans-serif`;
+    targetCtx.font = `900 ${rSize}px ${fontStack}`;
     targetCtx.fillStyle = '#ffffff';
     targetCtx.textAlign = 'center';
     targetCtx.textBaseline = 'middle';
@@ -644,35 +840,44 @@ function renderScene(targetCtx, W, H, fmt, spk, includeGuides = false) {
     targetCtx.textBaseline = 'top';
   }
 
-  // 7. Official TEDx License Footer
-  if (state.showTedFooter && fmt.mode !== 'badge') {
+  // 7. Configurable License / Event Attribution Footer
+  let renderedFooter = null;
+  if (state.showTedFooter && fmt.mode !== 'badge' && (state.footerText || '').trim()) {
     const footSize = Math.round(unit * 0.021);
-    const footY = fmt.rollerRatio > 0 ? H * (1 - fmt.rollerRatio) - footSize * 1.8 : H - footSize * 2.1;
-    targetCtx.font = `400 ${footSize}px Inter, sans-serif`;
-    targetCtx.fillStyle = 'rgba(255, 255, 255, 0.68)';
+    const footY = rollerRatio > 0 ? H * (1 - rollerRatio) - footSize * 1.8 : H - footSize * 2.1;
+    const fTxt = state.footerText.trim();
+    targetCtx.font = `400 ${footSize}px ${fontStack}`;
+    targetCtx.fillStyle = 'rgba(255, 255, 255, 0.72)';
     targetCtx.textAlign = 'right';
-    targetCtx.fillText('x = independently organized TED event', W - padLeft * 0.75, footY);
+    targetCtx.fillText(fTxt, W - padLeft * 0.75, footY);
     targetCtx.textAlign = 'left';
+    renderedFooter = { text: fTxt, x: W - padLeft * 0.75, y: footY, size: footSize };
   }
 
   // 8. Print Guides
   if (includeGuides) {
-    drawPrintGuides(targetCtx, W, H, fmt);
+    drawPrintGuides(targetCtx, W, H, rollerRatio, fontStack);
   }
 
   targetCtx.restore();
 
   return {
     geom,
+    darkSurface,
+    fontStack,
     portraitDrawMetrics,
+    markStartY,
     tedSize,
     subSize,
     padLeft,
+    svgOrgElements,
+    renderedEventTheme,
     nameFontSize,
     renderedNameLines,
     renderedTalkLine,
     bioFontSize,
-    bioLines
+    bioLines,
+    renderedFooter
   };
 }
 
@@ -713,13 +918,13 @@ function computePortraitMetrics(W, H, fmt, geom, spk, imgCanvas) {
   return { dx, dy, dw, dh, cx: l.cx, cy: l.cy, r: l.r };
 }
 
-function drawPortraitPlaceholder(targetCtx, lowerCircle, W, H) {
+function drawPortraitPlaceholder(targetCtx, lowerCircle, W, H, fontStack) {
   const cx = Math.min(W * 0.58, lowerCircle.cx);
   const cy = Math.min(H * 0.78, lowerCircle.cy);
   const r = Math.min(W, H) * 0.135;
 
   targetCtx.save();
-  targetCtx.fillStyle = '#19191f';
+  targetCtx.fillStyle = 'rgba(255,255,255,0.06)';
   targetCtx.beginPath();
   targetCtx.arc(cx, cy - r * 0.55, r * 0.62, 0, Math.PI * 2);
   targetCtx.fill();
@@ -729,13 +934,13 @@ function drawPortraitPlaceholder(targetCtx, lowerCircle, W, H) {
   targetCtx.fill();
 
   targetCtx.fillStyle = 'rgba(255,255,255,0.42)';
-  targetCtx.font = `600 ${Math.round(Math.min(W, H) * 0.026)}px Inter, sans-serif`;
+  targetCtx.font = `600 ${Math.round(Math.min(W, H) * 0.026)}px ${fontStack}`;
   targetCtx.textAlign = 'center';
   targetCtx.fillText('DROP SPEAKER PHOTO HERE', cx, cy + r * 1.25);
   targetCtx.restore();
 }
 
-function drawPrintGuides(targetCtx, W, H, fmt) {
+function drawPrintGuides(targetCtx, W, H, rollerRatio, fontStack) {
   targetCtx.save();
   const bleed = Math.round(Math.min(W, H) * 0.025);
   targetCtx.strokeStyle = 'rgba(0, 229, 255, 0.78)';
@@ -743,8 +948,8 @@ function drawPrintGuides(targetCtx, W, H, fmt) {
   targetCtx.setLineDash([14, 10]);
   targetCtx.strokeRect(bleed, bleed, W - bleed * 2, H - bleed * 2);
 
-  if (fmt.rollerRatio > 0) {
-    const rollerY = Math.round(H * (1 - fmt.rollerRatio));
+  if (rollerRatio > 0) {
+    const rollerY = Math.round(H * (1 - rollerRatio));
     targetCtx.fillStyle = 'rgba(235, 0, 40, 0.28)';
     targetCtx.fillRect(0, rollerY, W, H - rollerY);
 
@@ -757,8 +962,12 @@ function drawPrintGuides(targetCtx, W, H, fmt) {
     targetCtx.setLineDash([]);
     targetCtx.fillStyle = '#ffeb3b';
     targetCtx.textBaseline = 'bottom';
-    targetCtx.font = `700 ${Math.round(W * 0.021)}px Inter, sans-serif`;
-    targetCtx.fillText('▲ STANDEE ROLLER CASSETTE CLAMP ZONE (BOTTOM 3 INCHES — KEEP TEXT ABOVE)', bleed * 1.3, rollerY - Math.round(W * 0.01));
+    targetCtx.font = `700 ${Math.round(W * 0.020)}px ${fontStack}`;
+    targetCtx.fillText(
+      `▲ STANDEE ROLLER CASSETTE CLAMP ZONE (BOTTOM ${state.rollerInches} IN — KEEP TEXT ABOVE)`,
+      bleed * 1.3,
+      rollerY - Math.round(W * 0.01)
+    );
   }
   targetCtx.restore();
 }
@@ -775,6 +984,11 @@ function roundRect(context, x, y, w, h, r) {
 
 /* ---------------- Viewport Sizing & Live Preview ---------------- */
 async function renderPreview() {
+  if (state.activeView === 'options') {
+    updateOptionsLivePreview();
+    return;
+  }
+
   const fmt = FORMATS[state.format];
   const spk = currentSpeaker();
 
@@ -810,13 +1024,74 @@ async function renderPreview() {
     state.viewZoom === 1 ? 'Fit' : `${Math.round(state.viewZoom * 100)}%`;
 }
 
-/* ---------------- High-Res PNG, Editable SVG & Print PDF Exports ---------------- */
+function updateBrandHeaderAndPreview() {
+  syncCssAccentTheme();
+
+  const mainStr = (state.brandMain || '').trim() || 'EVENT';
+  const supStr = (state.brandSup || '').trim();
+  const subCombined = [state.orgLine1, state.orgLine2].map(s => (s || '').trim()).filter(Boolean).join(' ') || 'Custom Chapter';
+
+  document.getElementById('topBrandMain').textContent = mainStr;
+  document.getElementById('topBrandSup').textContent = supStr;
+  document.getElementById('topBrandTitle').textContent = subCombined;
+  document.getElementById('sidebarEventSummary').textContent = getFullEventName();
+  document.title = `${getFullEventName()} — Banner & Collateral Studio`;
+
+  updateOptionsLivePreview();
+}
+
+function updateOptionsLivePreview() {
+  const stage = document.getElementById('lockupPreviewStage');
+  if (!stage) return;
+
+  stage.style.background = state.circleBg || '#080808';
+  stage.style.fontFamily = getFontStack();
+
+  document.getElementById('lpMainText').textContent = (state.brandMain || '').trim();
+  document.getElementById('lpSupText').textContent = (state.brandSup || '').trim();
+
+  const headerRow = document.getElementById('lpHeaderRow');
+  const subLinesEl = document.getElementById('lpSubLines');
+  const l1 = (state.orgLine1 || '').trim();
+  const l2 = (state.orgLine2 || '').trim();
+
+  if (state.lockupMode === 'inline') {
+    headerRow.style.display = 'flex';
+    headerRow.style.alignItems = 'baseline';
+    headerRow.style.flexWrap = 'wrap';
+    headerRow.style.gap = '8px';
+    subLinesEl.style.marginTop = '0';
+    subLinesEl.textContent = [l1, l2].filter(Boolean).join(' • ');
+  } else {
+    headerRow.style.display = 'block';
+    subLinesEl.style.marginTop = '6px';
+    subLinesEl.innerHTML = [l1, l2].filter(Boolean).map(escapeXml).join('<br/>');
+  }
+
+  const themeEl = document.getElementById('lpThemePreview');
+  if ((state.eventTheme || '').trim()) {
+    themeEl.style.display = 'block';
+    themeEl.textContent = state.eventTheme.trim();
+  } else {
+    themeEl.style.display = 'none';
+  }
+
+  const footEl = document.getElementById('lpFooterPreview');
+  footEl.style.display = state.showTedFooter && (state.footerText || '').trim() ? 'block' : 'none';
+  footEl.textContent = (state.footerText || '').trim();
+}
+
+/* ---------------- Exports (PNG, SVG, PDF, Brand JSON) ---------------- */
 function slugify(str) {
-  return (str || 'speaker')
+  return (str || 'item')
     .replace(/\s+/g, '-')
     .replace(/[^a-zA-Z0-9-_]/g, '')
     .toLowerCase()
-    .slice(0, 42) || 'speaker';
+    .slice(0, 42) || 'item';
+}
+
+function getExportPrefix() {
+  return slugify(state.filePrefix || getFullEventName());
 }
 
 async function exportHighResPng(spk = currentSpeaker()) {
@@ -839,7 +1114,7 @@ async function exportHighResPng(spk = currentSpeaker()) {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `tedx-csa-${fmt.id}-${slugify(spk.name)}.png`;
+      a.download = `${getExportPrefix()}-${fmt.id}-${slugify(spk.name)}.png`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -881,33 +1156,43 @@ async function buildEditableSvgString(fmt, spk) {
 
   const pm = layout.portraitDrawMetrics;
   const unit = layout.geom.isLandscape ? H : W;
-  const topY = layout.geom.isLandscape ? H * 0.095 : fmt.mode === 'badge' ? H * 0.085 : H * 0.028;
-  const tedBaseline = Math.round(topY + layout.tedSize * 0.84);
-  let subY = topY + layout.tedSize * 1.02;
+  const svgFont = escapeXml(state.fontFamily || 'Inter') + ', Helvetica Neue, Arial, sans-serif';
+  const tedBaseline = Math.round(layout.markStartY + layout.tedSize * 0.84);
 
-  const orgLinesSvg = [];
-  if (state.orgLine1.trim()) {
-    orgLinesSvg.push(`<text x="${layout.padLeft.toFixed(1)}" y="${(subY + layout.subSize * 0.84).toFixed(1)}" fill="#F5F5F7" font-family="Inter, Helvetica Neue, Arial, sans-serif" font-weight="300" font-size="${layout.subSize}">${escapeXml(state.orgLine1.trim())}</text>`);
-    subY += layout.subSize * 1.05;
-  }
-  if (state.orgLine2.trim()) {
-    orgLinesSvg.push(`<text x="${layout.padLeft.toFixed(1)}" y="${(subY + layout.subSize * 0.84).toFixed(1)}" fill="#F5F5F7" font-family="Inter, Helvetica Neue, Arial, sans-serif" font-weight="300" font-size="${layout.subSize}">${escapeXml(state.orgLine2.trim())}</text>`);
-  }
+  const supTspan = (state.brandSup || '').trim()
+    ? `<tspan dy="${Math.round(-layout.tedSize * 0.34)}" font-size="${Math.round(layout.tedSize * 0.62)}">${escapeXml(state.brandSup.trim())}</tspan>`
+    : '';
+
+  const brandMarkSvg = ((state.brandMain || '').trim() || supTspan)
+    ? `<text x="${layout.padLeft.toFixed(1)}" y="${tedBaseline}" fill="${state.accentRed}" font-family="${svgFont}" font-weight="900" font-size="${layout.tedSize}" letter-spacing="-0.04em">${escapeXml((state.brandMain || '').trim())}${supTspan}</text>`
+    : '';
+
+  const orgLinesSvg = layout.svgOrgElements.map(el =>
+    `<text x="${el.x.toFixed(1)}" y="${(el.y + el.size * 0.84).toFixed(1)}" fill="#F5F5F7" font-family="${svgFont}" font-weight="${el.weight}" font-size="${el.size}">${escapeXml(el.text)}</text>`
+  ).join('\n    ');
+
+  const themeSvg = layout.renderedEventTheme
+    ? `<text x="${layout.renderedEventTheme.x.toFixed(1)}" y="${(layout.renderedEventTheme.y + layout.renderedEventTheme.size * 0.84).toFixed(1)}" fill="${state.accentRed}" font-family="${svgFont}" font-weight="700" font-size="${layout.renderedEventTheme.size}">${escapeXml(layout.renderedEventTheme.text)}</text>`
+    : '';
 
   const nameLinesSvg = layout.renderedNameLines.map(nl =>
-    `<text x="${nl.x.toFixed(1)}" y="${(nl.y + layout.nameFontSize * 0.84).toFixed(1)}" fill="#FFFFFF" font-family="Inter, Helvetica Neue, Arial, sans-serif" font-weight="800" font-size="${layout.nameFontSize}" letter-spacing="-0.02em">${escapeXml(nl.text)}</text>`
+    `<text x="${nl.x.toFixed(1)}" y="${(nl.y + layout.nameFontSize * 0.84).toFixed(1)}" fill="#FFFFFF" font-family="${svgFont}" font-weight="800" font-size="${layout.nameFontSize}" letter-spacing="-0.02em">${escapeXml(nl.text)}</text>`
   ).join('\n    ');
 
   const talkSvg = layout.renderedTalkLine
-    ? `<text x="${layout.renderedTalkLine.x.toFixed(1)}" y="${(layout.renderedTalkLine.y + layout.renderedTalkLine.size * 0.84).toFixed(1)}" fill="${state.accentRed}" font-family="Inter, Helvetica Neue, Arial, sans-serif" font-weight="600" font-size="${layout.renderedTalkLine.size}">${escapeXml(layout.renderedTalkLine.text)}</text>`
+    ? `<text x="${layout.renderedTalkLine.x.toFixed(1)}" y="${(layout.renderedTalkLine.y + layout.renderedTalkLine.size * 0.84).toFixed(1)}" fill="${state.accentRed}" font-family="${svgFont}" font-weight="600" font-size="${layout.renderedTalkLine.size}">${escapeXml(layout.renderedTalkLine.text)}</text>`
     : '';
 
   const maxBot = u.cy + u.r - unit * 0.025;
   const bioLinesSvg = layout.bioLines
     .filter(bl => bl.y + layout.bioFontSize <= maxBot)
     .map(bl =>
-      `<text x="${bl.x.toFixed(1)}" y="${(bl.y + layout.bioFontSize * 0.84).toFixed(1)}" fill="#EBEBEF" fill-opacity="0.9" font-family="Inter, Helvetica Neue, Arial, sans-serif" font-weight="400" font-size="${layout.bioFontSize}">${escapeXml(bl.text)}</text>`
+      `<text x="${bl.x.toFixed(1)}" y="${(bl.y + layout.bioFontSize * 0.84).toFixed(1)}" fill="#EBEBEF" fill-opacity="0.9" font-family="${svgFont}" font-weight="400" font-size="${layout.bioFontSize}">${escapeXml(bl.text)}</text>`
     ).join('\n    ');
+
+  const footerSvg = layout.renderedFooter
+    ? `<text x="${layout.renderedFooter.x.toFixed(1)}" y="${(layout.renderedFooter.y + layout.renderedFooter.size * 0.84).toFixed(1)}" text-anchor="end" fill="#FFFFFF" fill-opacity="0.72" font-family="${svgFont}" font-weight="400" font-size="${layout.renderedFooter.size}">${escapeXml(layout.renderedFooter.text)}</text>`
+    : '';
 
   const portraitSvg = (portraitHref && pm)
     ? `<g clip-path="url(#lowerCircleClip)">
@@ -919,32 +1204,33 @@ async function buildEditableSvgString(fmt, spk) {
   const badgeSvg = fmt.mode === 'badge'
     ? `<g id="Badge_Role_Bar">
       <rect x="0" y="${(H * 0.905).toFixed(1)}" width="${W}" height="${(H * 0.095).toFixed(1)}" fill="${state.accentRed}" />
-      <text x="${(W / 2).toFixed(1)}" y="${(H * 0.965).toFixed(1)}" text-anchor="middle" fill="#FFFFFF" font-family="Inter, Helvetica Neue, Arial, sans-serif" font-weight="900" font-size="${Math.round(W * 0.058)}">${escapeXml((spk.role || 'SPEAKER').toUpperCase())}</text>
+      <text x="${(W / 2).toFixed(1)}" y="${(H * 0.965).toFixed(1)}" text-anchor="middle" fill="#FFFFFF" font-family="${svgFont}" font-weight="900" font-size="${Math.round(W * 0.058)}">${escapeXml((spk.role || 'SPEAKER').toUpperCase())}</text>
     </g>`
     : '';
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
-  <title>TEDx CS Academy Coimbatore — ${escapeXml(spk.name.replace(/\n/g, ' '))}</title>
+  <title>${escapeXml(getFullEventName())} — ${escapeXml(spk.name.replace(/\n/g, ' '))}</title>
   <defs>
     <clipPath id="lowerCircleClip">
       <circle cx="${l.cx.toFixed(1)}" cy="${l.cy.toFixed(1)}" r="${l.r.toFixed(1)}" />
     </clipPath>
     <linearGradient id="bottomFade" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#080808" stop-opacity="0" />
-      <stop offset="100%" stop-color="#080808" stop-opacity="0.72" />
+      <stop offset="0%" stop-color="${layout.darkSurface}" stop-opacity="0" />
+      <stop offset="100%" stop-color="${layout.darkSurface}" stop-opacity="0.74" />
     </linearGradient>
   </defs>
 
-  <rect id="Background_Red" width="${W}" height="${H}" fill="${state.accentRed}" />
-  <circle id="Upper_Arc_Black" cx="${u.cx.toFixed(1)}" cy="${u.cy.toFixed(1)}" r="${u.r.toFixed(1)}" fill="#080808" />
-  <circle id="Lower_Arc_Black" cx="${l.cx.toFixed(1)}" cy="${l.cy.toFixed(1)}" r="${l.r.toFixed(1)}" fill="#080808" />
+  <rect id="Background_Accent" width="${W}" height="${H}" fill="${state.accentRed}" />
+  <circle id="Upper_Arc" cx="${u.cx.toFixed(1)}" cy="${u.cy.toFixed(1)}" r="${u.r.toFixed(1)}" fill="${layout.darkSurface}" />
+  <circle id="Lower_Arc" cx="${l.cx.toFixed(1)}" cy="${l.cy.toFixed(1)}" r="${l.r.toFixed(1)}" fill="${layout.darkSurface}" />
 
   ${portraitSvg}
 
-  <g id="TEDx_Event_Lockup">
-    <text x="${layout.padLeft.toFixed(1)}" y="${tedBaseline}" fill="${state.accentRed}" font-family="Inter, Helvetica Neue, Arial, sans-serif" font-weight="900" font-size="${layout.tedSize}" letter-spacing="-0.05em">TED<tspan dy="${Math.round(-layout.tedSize * 0.34)}" font-size="${Math.round(layout.tedSize * 0.62)}">x</tspan></text>
-    ${orgLinesSvg.join('\n    ')}
+  <g id="Event_Brand_Lockup">
+    ${brandMarkSvg}
+    ${orgLinesSvg}
+    ${themeSvg}
   </g>
 
   <g id="Speaker_Name">
@@ -956,6 +1242,7 @@ async function buildEditableSvgString(fmt, spk) {
     ${bioLinesSvg}
   </g>
 
+  ${footerSvg}
   ${badgeSvg}
 </svg>`;
 }
@@ -968,7 +1255,7 @@ async function exportEditableSvg() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `tedx-csa-${fmt.id}-${slugify(spk.name)}.svg`;
+  a.download = `${getExportPrefix()}-${fmt.id}-${slugify(spk.name)}.svg`;
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -995,7 +1282,7 @@ async function exportPrintPdfView() {
   win.document.write(`<!DOCTYPE html>
 <html>
 <head>
-  <title>TEDx CS Academy Coimbatore — ${escapeXml(spk.name.replace(/\n/g, ' '))}</title>
+  <title>${escapeXml(getFullEventName())} — ${escapeXml(spk.name.replace(/\n/g, ' '))}</title>
   <style>
     @page { margin: 0; size: ${fmt.w / 100}in ${fmt.h / 100}in; }
     html, body { margin: 0; padding: 0; background: #000; display: flex; justify-content: center; align-items: center; }
@@ -1007,6 +1294,59 @@ async function exportPrintPdfView() {
 </body>
 </html>`);
   win.document.close();
+}
+
+function exportBrandConfigJson() {
+  const cfg = {
+    version: 1,
+    brandMain: state.brandMain,
+    brandSup: state.brandSup,
+    lockupMode: state.lockupMode,
+    orgLine1: state.orgLine1,
+    orgLine2: state.orgLine2,
+    eventTheme: state.eventTheme,
+    showRoleOnAll: state.showRoleOnAll,
+    showTedFooter: state.showTedFooter,
+    footerText: state.footerText,
+    fontFamily: state.fontFamily,
+    accentRed: state.accentRed,
+    circleBg: state.circleBg,
+    arcPreset: state.arcPreset,
+    filePrefix: state.filePrefix,
+    rollerInches: state.rollerInches,
+    exportScale: state.exportScale
+  };
+  const blob = new Blob([JSON.stringify(cfg, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${getExportPrefix()}-brand-config.json`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 2500);
+  showToast('Exported shareable Event Brand .JSON config!');
+}
+
+function importBrandConfigJson(rawText) {
+  try {
+    const parsed = JSON.parse(rawText);
+    const allowed = [
+      'brandMain', 'brandSup', 'lockupMode', 'orgLine1', 'orgLine2',
+      'eventTheme', 'showRoleOnAll', 'showTedFooter', 'footerText',
+      'fontFamily', 'accentRed', 'circleBg', 'arcPreset',
+      'filePrefix', 'rollerInches', 'exportScale'
+    ];
+    for (const k of allowed) {
+      if (k in parsed) state[k] = parsed[k];
+    }
+    state.chapterPreset = 'custom';
+    syncInputsFromState();
+    updateBrandHeaderAndPreview();
+    saveState();
+    renderPreview();
+    showToast('Loaded Event Brand .JSON configuration!');
+  } catch (_) {
+    showToast('Invalid brand configuration JSON file.');
+  }
 }
 
 /* ---------------- Roster & CSV Bulk Import ---------------- */
@@ -1157,10 +1497,11 @@ function importSpeakersFromCsv(text) {
   }
 }
 
-/* ---------------- UI Binding & Interactive Controls ---------------- */
+/* ---------------- UI Binding & Sync ---------------- */
 function syncInputsFromState() {
   const spk = currentSpeaker();
 
+  // Studio Sidebar Inputs
   document.getElementById('speakerName').value = spk.name;
   document.getElementById('speakerBio').value = spk.bio;
   document.getElementById('bioCharCount').textContent = `${(spk.bio || '').length} chars`;
@@ -1172,6 +1513,29 @@ function syncInputsFromState() {
   document.getElementById('showRoleOnAll').checked = state.showRoleOnAll;
   document.getElementById('showTedFooter').checked = state.showTedFooter;
 
+  // Options Page Inputs
+  document.getElementById('optBrandMain').value = state.brandMain;
+  document.getElementById('optBrandSup').value = state.brandSup;
+  document.getElementById('optLockupMode').value = state.lockupMode;
+  document.getElementById('optOrgLine1').value = state.orgLine1;
+  document.getElementById('optOrgLine2').value = state.orgLine2;
+  document.getElementById('optEventTheme').value = state.eventTheme || '';
+  document.getElementById('optShowFooter').checked = state.showTedFooter;
+  document.getElementById('optFooterText').value = state.footerText || '';
+  document.getElementById('optFontFamily').value = state.fontFamily || 'Inter';
+  document.getElementById('optCircleBg').value = state.circleBg || '#080808';
+  document.getElementById('optFilePrefix').value = state.filePrefix || 'tedx-banner';
+  document.getElementById('optRollerInches').value = String(state.rollerInches ?? 3);
+  document.getElementById('optExportScale').value = String(state.exportScale);
+  document.getElementById('optAccentHexReadout').textContent = (state.accentRed || '#EB0028').toUpperCase();
+  document.getElementById('optCustomColor').value = state.accentRed || '#EB0028';
+  document.getElementById('customRedPicker').value = state.accentRed || '#EB0028';
+
+  document.querySelectorAll('.chapter-preset-card').forEach(c => {
+    c.classList.toggle('active', c.dataset.chapter === state.chapterPreset);
+  });
+
+  // Portrait & Geometry Sliders
   document.getElementById('photoGrayscale').checked = spk.photoGrayscale;
   document.getElementById('photoFeather').value = spk.photoFeather;
   document.getElementById('photoFeatherVal').textContent = `${spk.photoFeather}%`;
@@ -1205,7 +1569,12 @@ function syncInputsFromState() {
   document.querySelectorAll('.style-card').forEach(card => {
     card.classList.toggle('active', card.dataset.preset === state.arcPreset);
   });
+  document.querySelectorAll('.swatch').forEach(sw => {
+    sw.classList.toggle('active', sw.dataset.color.toLowerCase() === (state.accentRed || '').toLowerCase());
+  });
   document.getElementById('toggleGuidesBtn').classList.toggle('active', state.showGuides);
+
+  updateBrandHeaderAndPreview();
 }
 
 function handlePhotoFile(file) {
@@ -1239,15 +1608,102 @@ function centerCurrentPortrait() {
 }
 
 function bindEvents() {
+  // View Toggle Triggers
+  document.getElementById('openOptionsBtn').addEventListener('click', toggleOptionsView);
+  document.getElementById('brandHeaderBtn').addEventListener('click', toggleOptionsView);
+  document.getElementById('sidebarCustomizeEventBtn').addEventListener('click', () => setView('options'));
+  document.getElementById('openFullOptionsLink').addEventListener('click', () => setView('options'));
+  document.getElementById('closeOptionsBtn').addEventListener('click', () => setView('studio'));
+
+  // Format Tabs (clicking a format while in Options also switches back to Studio!)
   document.getElementById('formatTabs').addEventListener('click', (e) => {
     const btn = e.target.closest('.format-pill');
     if (!btn) return;
     state.format = btn.dataset.format;
+    if (state.activeView === 'options') setView('studio');
     syncInputsFromState();
     saveState();
     renderPreview();
   });
 
+  // 1-Click Chapter Presets on Options Page
+  document.getElementById('chapterPresetsGrid').addEventListener('click', async (e) => {
+    const card = e.target.closest('.chapter-preset-card');
+    if (!card) return;
+    const preset = CHAPTER_PRESETS[card.dataset.chapter];
+    if (!preset) return;
+    Object.assign(state, structuredClone(preset));
+    syncInputsFromState();
+    saveState();
+    if (document.fonts && document.fonts.ready) await document.fonts.ready;
+    renderPreview();
+    showToast(`Applied "${getFullEventName()}" brand preset!`);
+  });
+
+  // Options Page Detailed Fields
+  const bindBrandInput = (id, prop, transformFn) => {
+    document.getElementById(id).addEventListener('input', (e) => {
+      state[prop] = transformFn ? transformFn(e.target.value) : e.target.value;
+      state.chapterPreset = 'custom';
+      syncInputsFromState();
+      saveState();
+      renderPreview();
+    });
+  };
+
+  bindBrandInput('optBrandMain', 'brandMain');
+  bindBrandInput('optBrandSup', 'brandSup');
+  bindBrandInput('optLockupMode', 'lockupMode');
+  bindBrandInput('optOrgLine1', 'orgLine1');
+  bindBrandInput('optOrgLine2', 'orgLine2');
+  bindBrandInput('optEventTheme', 'eventTheme');
+  bindBrandInput('optFooterText', 'footerText');
+  bindBrandInput('optFontFamily', 'fontFamily');
+  bindBrandInput('optCircleBg', 'circleBg');
+  bindBrandInput('optFilePrefix', 'filePrefix');
+  bindBrandInput('optRollerInches', 'rollerInches', Number);
+  bindBrandInput('optExportScale', 'exportScale', (v) => Number(v) || 1);
+
+  document.getElementById('optShowFooter').addEventListener('change', (e) => {
+    state.showTedFooter = e.target.checked;
+    syncInputsFromState();
+    saveState();
+    renderPreview();
+  });
+
+  document.getElementById('optAccentSwatches').addEventListener('click', (e) => {
+    const sw = e.target.closest('.swatch');
+    if (!sw) return;
+    state.accentRed = sw.dataset.color;
+    state.chapterPreset = 'custom';
+    syncInputsFromState();
+    saveState();
+    renderPreview();
+  });
+
+  document.getElementById('optCustomColor').addEventListener('input', (e) => {
+    state.accentRed = e.target.value;
+    state.chapterPreset = 'custom';
+    syncInputsFromState();
+    saveState();
+    renderPreview();
+  });
+
+  // Brand Config JSON Export / Import
+  document.getElementById('exportBrandJsonBtn').addEventListener('click', exportBrandConfigJson);
+  document.getElementById('importBrandJsonBtn').addEventListener('click', () => {
+    document.getElementById('brandJsonInput').click();
+  });
+  document.getElementById('brandJsonInput').addEventListener('change', (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    const r = new FileReader();
+    r.onload = (ev) => importBrandConfigJson(ev.target.result);
+    r.readAsText(f);
+    e.target.value = '';
+  });
+
+  // Studio Sidebar Sub-Tabs
   document.querySelectorAll('.panel-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
@@ -1296,35 +1752,31 @@ function bindEvents() {
 
   document.getElementById('resetDemoBtn').addEventListener('click', async () => {
     localStorage.removeItem(STORAGE_KEY);
+    Object.assign(state, structuredClone(CHAPTER_PRESETS.csa));
     state.speakers = structuredClone(DEMO_SPEAKERS);
     state.activeSpeakerIndex = 0;
     state.arcPreset = 'classic';
     state.waistGap = 0;
     state.arcSpin = 0;
-    state.accentRed = '#EB0028';
     syncInputsFromState();
     renderRosterChips();
     await renderPreview();
-    showToast('Restored demo speaker lineup');
+    showToast('Restored demo speakers & default chapter');
   });
 
-  document.getElementById('orgLine1').addEventListener('input', (e) => {
-    state.orgLine1 = e.target.value;
-    saveState();
-    renderPreview();
-  });
-  document.getElementById('orgLine2').addEventListener('input', (e) => {
-    state.orgLine2 = e.target.value;
-    saveState();
-    renderPreview();
-  });
+  // Quick Chapter Edit in Sidebar
+  bindBrandInput('orgLine1', 'orgLine1');
+  bindBrandInput('orgLine2', 'orgLine2');
+
   document.getElementById('showRoleOnAll').addEventListener('change', (e) => {
     state.showRoleOnAll = e.target.checked;
+    syncInputsFromState();
     saveState();
     renderPreview();
   });
   document.getElementById('showTedFooter').addEventListener('change', (e) => {
     state.showTedFooter = e.target.checked;
+    syncInputsFromState();
     saveState();
     renderPreview();
   });
@@ -1353,7 +1805,6 @@ function bindEvents() {
     }
   });
 
-  // Full-stage drag & drop
   const stage = document.getElementById('canvasViewport');
   stage.addEventListener('dragenter', (e) => {
     e.preventDefault();
@@ -1426,21 +1877,23 @@ function bindEvents() {
     const sw = e.target.closest('.swatch');
     if (!sw) return;
     state.accentRed = sw.dataset.color;
-    document.getElementById('customRedPicker').value = state.accentRed;
-    document.querySelectorAll('.swatch').forEach(b => b.classList.toggle('active', b === sw));
+    state.chapterPreset = 'custom';
+    syncInputsFromState();
     saveState();
     renderPreview();
   });
 
   document.getElementById('customRedPicker').addEventListener('input', (e) => {
     state.accentRed = e.target.value;
-    document.querySelectorAll('.swatch').forEach(b => b.classList.remove('active'));
+    state.chapterPreset = 'custom';
+    syncInputsFromState();
     saveState();
     renderPreview();
   });
 
   document.getElementById('exportScaleSelect').addEventListener('change', (e) => {
     state.exportScale = Number(e.target.value) || 1;
+    syncInputsFromState();
     saveState();
     renderPreview();
   });
@@ -1459,7 +1912,7 @@ function bindEvents() {
     renderPreview();
   });
 
-  // Canvas Interactive Drag & Wheel Zoom for Portrait
+  // Canvas Interactive Drag & Wheel Zoom
   canvas.addEventListener('mousedown', (e) => {
     isDragging = true;
     const spk = currentSpeaker();
@@ -1502,7 +1955,7 @@ function bindEvents() {
       ...structuredClone(DEMO_SPEAKERS[2]),
       id: `spk_${Date.now()}`,
       name: `Speaker ${idx}\nFull Name`,
-      bio: 'Designation, organization, and brief speaker bio for TEDx CS Academy Coimbatore.',
+      bio: `Designation, organization, and brief speaker bio for ${getFullEventName()}.`,
       talkTitle: '',
       photoDataUrl: ''
     });
@@ -1551,6 +2004,7 @@ function bindEvents() {
   // Topbar Buttons
   document.getElementById('toggleGuidesBtn').addEventListener('click', () => {
     state.showGuides = !state.showGuides;
+    if (state.activeView === 'options') setView('studio');
     syncInputsFromState();
     renderPreview();
   });
@@ -1585,9 +2039,13 @@ function bindEvents() {
     if (e.key === '?' || (e.shiftKey && e.key === '/')) {
       modal.classList.toggle('open');
     } else if (e.key === 'Escape') {
-      modal.classList.remove('open');
+      if (modal.classList.contains('open')) modal.classList.remove('open');
+      else if (state.activeView === 'options') setView('studio');
+    } else if (e.key.toLowerCase() === 'o') {
+      toggleOptionsView();
     } else if (e.key.toLowerCase() === 'g') {
       state.showGuides = !state.showGuides;
+      if (state.activeView === 'options') setView('studio');
       syncInputsFromState();
       renderPreview();
     } else if (e.key.toLowerCase() === 'r') {
@@ -1596,6 +2054,7 @@ function bindEvents() {
       const fk = FORMAT_KEYS[Number(e.key) - 1];
       if (fk) {
         state.format = fk;
+        if (state.activeView === 'options') setView('studio');
         syncInputsFromState();
         saveState();
         renderPreview();

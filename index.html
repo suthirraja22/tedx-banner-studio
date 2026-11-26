@@ -3,22 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TEDx CS Academy Coimbatore — Speaker Banner & Collateral Studio</title>
-  <meta name="description" content="Open-source banner, standee, social reveal, and stage backdrop generator built for TEDx CS Academy Coimbatore with arc-aware typography and layered SVG/PNG print export." />
+  <title>TEDx &amp; Conference Banner Studio — Configurable Event Collateral Engine</title>
+  <meta name="description" content="Configurable open-source speaker banner, roll-up standee, social reveal, and stage backdrop studio for any TEDx chapter, university club, or conference." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <!-- Top Bar -->
   <header class="topbar">
-    <div class="brand">
+    <div class="brand" id="brandHeaderBtn" title="Click to customize Event Chapter &amp; Brand Options">
       <div class="brand-badge">
-        <div class="brand-logo">TED<sup>x</sup></div>
+        <div class="brand-logo"><span id="topBrandMain">TED</span><sup id="topBrandSup">x</sup></div>
       </div>
       <div class="brand-meta">
-        <span class="brand-title">CS Academy Coimbatore</span>
+        <div class="brand-title-row">
+          <span class="brand-title" id="topBrandTitle">CS Academy Coimbatore</span>
+          <span class="brand-edit-pill">Edit Event</span>
+        </div>
         <span class="brand-sub">Banner &amp; Event Collateral Studio</span>
       </div>
     </div>
@@ -27,11 +30,11 @@
     <nav class="format-pills" id="formatTabs" aria-label="Banner Format Presets">
       <button class="format-pill active" data-format="standee_3x6" title="Shortcut: 1">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="4" y1="22" x2="20" y2="22"/></svg>
-        Standee 3×6 ft
+        Standee 3×6
       </button>
       <button class="format-pill" data-format="standee_25x6" title="Shortcut: 2">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="5" y1="22" x2="19" y2="22"/></svg>
-        Standee 2.5×6 ft
+        Standee 2.5×6
       </button>
       <button class="format-pill" data-format="ig_post" title="Shortcut: 3">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="12" r="4"/></svg>
@@ -51,18 +54,20 @@
       </button>
     </nav>
 
-    <!-- Export Actions -->
+    <!-- Topbar Actions -->
     <div class="topbar-actions">
+      <button class="btn" id="openOptionsBtn" title="Configure Event Name, Chapter Presets, Fonts, Colors &amp; Print Settings (Shortcut: O)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+        <span id="openOptionsBtnLabel">Event Options</span>
+      </button>
       <button class="btn" id="toggleGuidesBtn" title="Toggle flex roller clamp &amp; bleed guides (Shortcut: G)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/></svg>
-        Print Guides
+        Guides
       </button>
       <button class="btn" id="exportSvgBtn" title="Download layered vector SVG for Illustrator, Figma, CorelDRAW, or Canva">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
         .SVG
       </button>
       <button class="btn" id="exportPdfBtn" title="Open print-sized sheet to save as PDF">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
         .PDF
       </button>
       <button class="btn btn-primary" id="exportPngBtn" title="Download high-resolution PNG (Cmd/Ctrl + E)">
@@ -73,15 +78,15 @@
     </div>
   </header>
 
-  <!-- Main Studio Workspace -->
-  <main class="workspace">
+  <!-- ==================== VIEW 1: MAIN STUDIO WORKSPACE ==================== -->
+  <main class="workspace" id="studioWorkspace">
     <aside class="sidebar">
       <!-- Speaker Roster -->
       <section class="roster-bar">
         <div class="roster-header">
           <span class="roster-label">
             Speaker Lineup
-            <span class="roster-count" id="rosterCount">2</span>
+            <span class="roster-count" id="rosterCount">3</span>
           </span>
           <div class="roster-actions">
             <button class="btn btn-sm" id="addSpeakerBtn" title="Add blank speaker slot">+ Add</button>
@@ -111,8 +116,17 @@
       </div>
 
       <div class="panel-body">
-        <!-- TAB 1: SPEAKER & EVENT INFO -->
+        <!-- TAB 1: SPEAKER & QUICK EVENT CARD -->
         <div class="tab-pane active" id="tabContent">
+          <!-- Active Event Summary Card -->
+          <div class="event-summary-banner">
+            <div class="esb-info">
+              <span class="esb-kicker">Active Event Identity</span>
+              <span class="esb-name" id="sidebarEventSummary">TEDx CS Academy Coimbatore</span>
+            </div>
+            <button class="btn btn-sm" id="sidebarCustomizeEventBtn">Change Event →</button>
+          </div>
+
           <div class="control-group">
             <div class="group-title">
               <span>Speaker Details</span>
@@ -151,15 +165,18 @@
           </div>
 
           <div class="control-group">
-            <div class="group-title">TEDx Event Lockup</div>
+            <div class="group-title">
+              <span>Quick Chapter Edit</span>
+              <button class="btn btn-sm" id="openFullOptionsLink">All Options</button>
+            </div>
             <div class="row-2">
               <div class="field">
-                <label class="field-label" for="orgLine1"><span>Institution / Line 1</span></label>
-                <input type="text" id="orgLine1" value="CS Academy" />
+                <label class="field-label" for="orgLine1"><span>Chapter / Line 1</span></label>
+                <input type="text" id="orgLine1" value="CS Academy" placeholder="e.g. IIT Madras / Bengaluru" />
               </div>
               <div class="field">
-                <label class="field-label" for="orgLine2"><span>City / Line 2</span></label>
-                <input type="text" id="orgLine2" value="Coimbatore" />
+                <label class="field-label" for="orgLine2"><span>City / Line 2 (Opt.)</span></label>
+                <input type="text" id="orgLine2" value="Coimbatore" placeholder="Optional second line" />
               </div>
             </div>
 
@@ -169,7 +186,7 @@
             </label>
 
             <label class="checkbox-row">
-              <span>Official TEDx License Footer Line</span>
+              <span>Show License / Event Footer Line</span>
               <input type="checkbox" id="showTedFooter" />
             </label>
           </div>
@@ -193,7 +210,7 @@
           </div>
 
           <div class="control-group">
-            <div class="group-title">TEDx Studio B&amp;W &amp; Vignette</div>
+            <div class="group-title">Studio B&amp;W &amp; Vignette</div>
 
             <label class="checkbox-row">
               <span>Monochrome Studio B&amp;W Grade</span>
@@ -203,9 +220,9 @@
             <div class="field">
               <div class="field-label">
                 <span>Edge &amp; Shoulder Vignette Fade</span>
-                <span class="field-val" id="photoFeatherVal">48%</span>
+                <span class="field-val" id="photoFeatherVal">52%</span>
               </div>
-              <input type="range" id="photoFeather" min="0" max="100" value="48" />
+              <input type="range" id="photoFeather" min="0" max="100" value="52" />
             </div>
 
             <div class="field">
@@ -219,9 +236,9 @@
             <div class="field">
               <div class="field-label">
                 <span>Contrast</span>
-                <span class="field-val" id="photoContrastVal">116%</span>
+                <span class="field-val" id="photoContrastVal">114%</span>
               </div>
-              <input type="range" id="photoContrast" min="75" max="180" value="116" />
+              <input type="range" id="photoContrast" min="75" max="180" value="114" />
             </div>
 
             <div class="field">
@@ -273,7 +290,7 @@
 
             <div class="field">
               <div class="field-label">
-                <span>Red Waist Ribbon Width</span>
+                <span>Accent Waist Ribbon Width</span>
                 <span class="field-val" id="waistGapVal">0</span>
               </div>
               <input type="range" id="waistGap" min="-35" max="45" value="0" />
@@ -288,11 +305,13 @@
             </div>
 
             <div class="field">
-              <span class="field-label"><span>Crimson Accent Palette</span></span>
+              <span class="field-label"><span>Quick Accent Swatches</span></span>
               <div class="swatches" id="colorSwatches">
                 <button class="swatch active" data-color="#EB0028" style="background:#EB0028" title="Official TED Red (#EB0028)"></button>
                 <button class="swatch" data-color="#E62B1E" style="background:#E62B1E" title="Classic TEDx Red (#E62B1E)"></button>
                 <button class="swatch" data-color="#D4001F" style="background:#D4001F" title="CMYK Flex Print Red (#D4001F)"></button>
+                <button class="swatch" data-color="#2563EB" style="background:#2563EB" title="Conference Royal Blue (#2563EB)"></button>
+                <button class="swatch" data-color="#7C3AED" style="background:#7C3AED" title="Summit Electric Violet (#7C3AED)"></button>
                 <input type="color" id="customRedPicker" value="#EB0028" title="Custom Accent Color" style="width:28px;height:28px;border:none;background:none;cursor:pointer;" />
               </div>
             </div>
@@ -326,7 +345,7 @@
               </select>
             </div>
             <p class="helper-note">
-              Enable <strong>Print Guides (G)</strong> before sending standees to flex printers to verify the bottom 3-inch roller cassette clamp margin.
+              Enable <strong>Guides (G)</strong> before sending standees to flex printers to verify your configured roller cassette clamp margin.
             </p>
           </div>
         </div>
@@ -336,7 +355,7 @@
     <!-- Center Preview Stage -->
     <section class="stage" id="canvasViewport">
       <div class="stage-drop-overlay">
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#EB0028" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         <span>Drop Speaker Portrait to Blend into Lower Arc</span>
       </div>
 
@@ -358,6 +377,208 @@
     </section>
   </main>
 
+  <!-- ==================== VIEW 2: FULL EVENT & BRAND OPTIONS PAGE ==================== -->
+  <section class="options-page" id="optionsPage" aria-label="Event and Brand Options">
+    <div class="options-container">
+      <!-- Top Hero Header -->
+      <div class="options-hero">
+        <div>
+          <h1 class="options-hero-title">Event &amp; Brand Options</h1>
+          <p class="options-hero-sub">Adapt the entire studio for any TEDx chapter, university society, city conference, or tech summit. Changes sync instantly across all 6 banner formats.</p>
+        </div>
+        <div class="options-hero-actions">
+          <button class="btn" id="exportBrandJsonBtn" title="Download shareable JSON config for your team">Export Config .JSON</button>
+          <button class="btn" id="importBrandJsonBtn" title="Load a team brand config JSON">Import Config .JSON</button>
+          <input type="file" id="brandJsonInput" accept=".json" hidden />
+          <button class="btn btn-primary" id="closeOptionsBtn">Done — Back to Studio</button>
+        </div>
+      </div>
+
+      <!-- Quick Starter Chapter Presets -->
+      <div class="options-card">
+        <div class="options-card-header">
+          <span class="options-card-title">1-Click Event Starter Templates</span>
+          <span class="options-card-badge">Click a preset to load sample branding, or customize any field below</span>
+        </div>
+        <div class="preset-grid" id="chapterPresetsGrid">
+          <button class="chapter-preset-card active" data-chapter="csa">
+            <span class="cp-tag">School / Youth TEDx</span>
+            <span class="cp-name">TEDx CS Academy Coimbatore</span>
+            <span class="cp-desc">Stacked 2-line chapter lockup • TED Red</span>
+          </button>
+          <button class="chapter-preset-card" data-chapter="city">
+            <span class="cp-tag">City TEDx Chapter</span>
+            <span class="cp-name">TEDx Bengaluru</span>
+            <span class="cp-desc">Inline classic lockup • Official license bar</span>
+          </button>
+          <button class="chapter-preset-card" data-chapter="university">
+            <span class="cp-tag">University Edition</span>
+            <span class="cp-name">TEDx IIT Madras</span>
+            <span class="cp-desc">Stacked campus lockup • Plus Jakarta Sans</span>
+          </button>
+          <button class="chapter-preset-card" data-chapter="summit">
+            <span class="cp-tag">Tech Conference / Club</span>
+            <span class="cp-name">DevSummit ’26</span>
+            <span class="cp-desc">Custom brand mark • Royal Blue • Space Grotesk</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Two-Column Detailed Settings -->
+      <div class="options-grid">
+        <!-- Left Column: Identity & Lockup -->
+        <div class="options-col">
+          <div class="options-card">
+            <div class="options-card-header">
+              <span class="options-card-title">Event Identity &amp; Logo Lockup</span>
+              <span class="options-card-badge">Top-left banner header</span>
+            </div>
+
+            <div class="row-3">
+              <div class="field">
+                <label class="field-label" for="optBrandMain"><span>Brand Prefix</span></label>
+                <input type="text" id="optBrandMain" value="TED" placeholder="TED / GDG / IEEE" />
+              </div>
+              <div class="field">
+                <label class="field-label" for="optBrandSup"><span>Superscript</span></label>
+                <input type="text" id="optBrandSup" value="x" placeholder="x / ’26 / blank" />
+              </div>
+              <div class="field">
+                <label class="field-label" for="optLockupMode"><span>Lockup Style</span></label>
+                <select id="optLockupMode">
+                  <option value="stacked">Stacked Below Mark</option>
+                  <option value="inline">Inline Beside Mark</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row-2">
+              <div class="field">
+                <label class="field-label" for="optOrgLine1"><span>Chapter / Organization (Line 1)</span></label>
+                <input type="text" id="optOrgLine1" value="CS Academy" placeholder="e.g. PSG Tech / Bengaluru" />
+              </div>
+              <div class="field">
+                <label class="field-label" for="optOrgLine2"><span>City / Edition (Line 2 — Optional)</span></label>
+                <input type="text" id="optOrgLine2" value="Coimbatore" placeholder="Leave blank for single-line" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field-label" for="optEventTheme">
+                <span>Global Event Theme / Date Header (Optional)</span>
+                <span class="field-val">Shown subtly when enabled</span>
+              </label>
+              <input type="text" id="optEventTheme" value="" placeholder="e.g. UNCHARTED HORIZONS • NOVEMBER 2026" />
+            </div>
+
+            <label class="checkbox-row">
+              <span>Display License / Attribution Footer on Banners</span>
+              <input type="checkbox" id="optShowFooter" />
+            </label>
+
+            <div class="field">
+              <label class="field-label" for="optFooterText"><span>Footer Attribution Copy</span></label>
+              <input type="text" id="optFooterText" value="x = independently organized TED event" placeholder="x = independently organized TED event" />
+            </div>
+          </div>
+
+          <div class="options-card">
+            <div class="options-card-header">
+              <span class="options-card-title">Print Shop &amp; Export Defaults</span>
+              <span class="options-card-badge">Production workflow</span>
+            </div>
+
+            <div class="row-3">
+              <div class="field">
+                <label class="field-label" for="optFilePrefix"><span>Filename Prefix</span></label>
+                <input type="text" id="optFilePrefix" value="tedx-csa" placeholder="e.g. tedx-iitm" />
+              </div>
+              <div class="field">
+                <label class="field-label" for="optRollerInches"><span>Standee Clamp Zone</span></label>
+                <select id="optRollerInches">
+                  <option value="0">None (0 in — Frame Banner)</option>
+                  <option value="2.5">2.5 inches (Slim Cassette)</option>
+                  <option value="3" selected>3.0 inches (Standard Roll-Up)</option>
+                  <option value="4">4.0 inches (Heavy Base)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label class="field-label" for="optExportScale"><span>Default PNG Scale</span></label>
+                <select id="optExportScale">
+                  <option value="1">1x Standard HD</option>
+                  <option value="2">2x Ultra-HD Flex</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Live Lockup Preview + Palette & Fonts -->
+        <div class="options-col">
+          <div class="options-card">
+            <div class="options-card-header">
+              <span class="options-card-title">Live Header Lockup Preview</span>
+              <span class="options-card-badge">Real-time preview</span>
+            </div>
+
+            <div class="lockup-preview-stage" id="lockupPreviewStage">
+              <div id="lpHeaderRow">
+                <span class="lp-mark" id="lpMark"><span id="lpMainText">TED</span><sup id="lpSupText">x</sup></span>
+                <div class="lp-lines" id="lpSubLines">CS Academy<br/>Coimbatore</div>
+              </div>
+              <div class="lp-tagline" id="lpThemePreview" style="display:none;"></div>
+              <div class="lp-footer" id="lpFooterPreview">x = independently organized TED event</div>
+            </div>
+          </div>
+
+          <div class="options-card">
+            <div class="options-card-header">
+              <span class="options-card-title">Typography &amp; Color System</span>
+              <span class="options-card-badge">Applies to Canvas &amp; SVG</span>
+            </div>
+
+            <div class="field">
+              <label class="field-label" for="optFontFamily"><span>Banner Typeface</span></label>
+              <select id="optFontFamily">
+                <option value="Inter">Inter (Modern Grotesque — Default)</option>
+                <option value="Helvetica Neue">Helvetica Neue / Arial (Classic TEDx Standard)</option>
+                <option value="Plus Jakarta Sans">Plus Jakarta Sans (Contemporary Geometric)</option>
+                <option value="Space Grotesk">Space Grotesk (Tech &amp; Engineering Summit)</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <div class="field-label">
+                <span>Primary Brand Accent Color</span>
+                <span class="field-val" id="optAccentHexReadout">#EB0028</span>
+              </div>
+              <div class="swatches" id="optAccentSwatches">
+                <button class="swatch active" data-color="#EB0028" style="background:#EB0028" title="Official TED Red"></button>
+                <button class="swatch" data-color="#E62B1E" style="background:#E62B1E" title="Classic TEDx Red"></button>
+                <button class="swatch" data-color="#D4001F" style="background:#D4001F" title="CMYK Print Red"></button>
+                <button class="swatch" data-color="#2563EB" style="background:#2563EB" title="Royal Blue"></button>
+                <button class="swatch" data-color="#7C3AED" style="background:#7C3AED" title="Electric Violet"></button>
+                <button class="swatch" data-color="#059669" style="background:#059669" title="Emerald Green"></button>
+                <button class="swatch" data-color="#EA580C" style="background:#EA580C" title="Blaze Orange"></button>
+                <input type="color" id="optCustomColor" value="#EB0028" style="width:28px;height:28px;border:none;background:none;cursor:pointer;" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field-label" for="optCircleBg"><span>Geometric Arc Surface Color</span></label>
+              <select id="optCircleBg">
+                <option value="#080808">Studio Onyx (#080808 — Recommended)</option>
+                <option value="#000000">Pure Pitch Black (#000000)</option>
+                <option value="#0f172a">Midnight Slate (#0F172A)</option>
+                <option value="#18181b">Deep Graphite (#18181B)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Keyboard Shortcuts Modal -->
   <div class="modal-backdrop" id="shortcutsModal">
     <div class="modal-card">
@@ -366,6 +587,7 @@
         <button class="btn btn-sm" id="closeShortcutsBtn">Close</button>
       </div>
       <div class="shortcut-list">
+        <div class="shortcut-item"><span>Open / Close Event Options Page</span><span class="kbd">O</span></div>
         <div class="shortcut-item"><span>Switch Format Presets</span><span class="kbd">1 – 6</span></div>
         <div class="shortcut-item"><span>Toggle Print &amp; Roller Guides</span><span class="kbd">G</span></div>
         <div class="shortcut-item"><span>Center Speaker Portrait</span><span class="kbd">R</span></div>
