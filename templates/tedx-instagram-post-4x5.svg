@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1350" width="1080" height="1350">
+  <title>TEDx CS Academy Coimbatore Template (tedx-instagram-post-4x5.svg)</title>
+  <defs>
+    <clipPath id="Speaker_Portrait_Circle_Clip">
+      <circle cx="745" cy="1181" r="740" />
+    </clipPath>
+    <radialGradient id="Portrait_Placeholder_Glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#26262c" />
+      <stop offset="100%" stop-color="#080808" />
+    </radialGradient>
+  </defs>
+
+  <!-- 1. Official TED Red Background -->
+  <rect id="TED_Red_Background" width="1080" height="1350" fill="#EB0028" />
+
+  <!-- 2. Dual Offset Black Circles -->
+  <circle id="Upper_Content_Arc" cx="259" cy="115" r="729" fill="#080808" />
+  <circle id="Lower_Portrait_Arc" cx="745" cy="1181" r="740" fill="#080808" />
+
+  <!-- 3. Speaker Portrait Group (Replace placeholder inside clip-path with speaker B&W photo) -->
+  <g id="Speaker_Portrait_Slot" clip-path="url(#Speaker_Portrait_Circle_Clip)">
+    <circle cx="605" cy="1053" r="346" fill="url(#Portrait_Placeholder_Glow)" />
+    <text x="605" y="1066" text-anchor="middle" fill="#71717A" font-family="Inter, Helvetica Neue, Arial, sans-serif" font-weight="600" font-size="35">PLACE B&amp;W SPEAKER PHOTO HERE</text>
+  </g>
+
+  <!-- 4. TEDx CS Academy Coimbatore Lockup -->
+  <g id="TEDx_Logo_Lockup">
+    <text x="63" y="135" fill="#EB0028" font-family="Inter, Helvetica Neue, Arial, sans-serif" font-weight="900" font-size="114" letter-spacing="-0.05em">TED<tspan dy="-39" font-size="71">x</tspan></text>
+    <text x="63" y="215" fill="#F5F5F7" font-family="Inter, Helvetica Neue, Arial, sans-serif" font-weight="300" font-size="69">CS Academy</text>
+    <text x="63" y="290" fill="#F5F5F7" font-family="Inter, Helvetica Neue, Arial, sans-serif" font-weight="300" font-size="69">Coimbatore</text>
+  </g>
+
+  <!-- 5. Speaker Name -->
+  <g id="Speaker_Name_Editable">
+    <text x="63" y="425" fill="#FFFFFF" font-family="Inter, Helvetica Neue, Arial, sans-serif" font-weight="800" font-size="117" letter-spacing="-0.02em">Speaker</text>
+    <text x="63" y="549" fill="#FFFFFF" font-family="Inter, Helvetica Neue, Arial, sans-serif" font-weight="800" font-size="117" letter-spacing="-0.02em">Middle</text>
+    <text x="63" y="673" fill="#FFFFFF" font-family="Inter, Helvetica Neue, Arial, sans-serif" font-weight="800" font-size="117" letter-spacing="-0.02em">Last Name</text>
+  </g>
+
+  <!-- 6. Speaker Bio -->
+  <g id="Speaker_Bio_Editable">
+    <text x="63" y="746" fill="#EBEBEF" fill-opacity="0.9" font-family="Inter, Helvetica Neue, Arial, sans-serif" font-weight="400" font-size="36">
+      <tspan x="63" dy="0">Role, title, and key credentials go here.</tspan>
+      <tspan x="63" dy="50">Add 3–5 concise lines describing their work,</tspan>
+      <tspan x="63" dy="50">impact, and connection to your TEDx theme.</tspan>
+    </text>
+  </g>
+</svg>

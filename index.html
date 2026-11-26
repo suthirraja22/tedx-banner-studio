@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TEDx CS Academy Coimbatore — Speaker Banner & Collateral Studio</title>
+  <meta name="description" content="Open-source banner, standee, social reveal, and stage backdrop generator built for TEDx CS Academy Coimbatore with arc-aware typography and layered SVG/PNG print export." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-badge">
+        <div class="brand-logo">TED<sup>x</sup></div>
+      </div>
+      <div class="brand-meta">
+        <span class="brand-title">CS Academy Coimbatore</span>
+        <span class="brand-sub">Banner &amp; Event Collateral Studio</span>
+      </div>
+    </div>
+
+    <!-- Format Presets -->
+    <nav class="format-pills" id="formatTabs" aria-label="Banner Format Presets">
+      <button class="format-pill active" data-format="standee_3x6" title="Shortcut: 1">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="4" y1="22" x2="20" y2="22"/></svg>
+        Standee 3×6 ft
+      </button>
+      <button class="format-pill" data-format="standee_25x6" title="Shortcut: 2">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="5" y1="22" x2="19" y2="22"/></svg>
+        Standee 2.5×6 ft
+      </button>
+      <button class="format-pill" data-format="ig_post" title="Shortcut: 3">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="12" r="4"/></svg>
+        IG Post 4:5
+      </button>
+      <button class="format-pill" data-format="ig_story" title="Shortcut: 4">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="3"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        IG Story 9:16
+      </button>
+      <button class="format-pill" data-format="backdrop_16x9" title="Shortcut: 5">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="18" x2="12" y2="21"/></svg>
+        Stage 16:9
+      </button>
+      <button class="format-pill" data-format="badge_id" title="Shortcut: 6">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><line x1="9" y1="7" x2="15" y2="7"/><circle cx="12" cy="13" r="2.5"/></svg>
+        ID Badge
+      </button>
+    </nav>
+
+    <!-- Export Actions -->
+    <div class="topbar-actions">
+      <button class="btn" id="toggleGuidesBtn" title="Toggle flex roller clamp &amp; bleed guides (Shortcut: G)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/></svg>
+        Print Guides
+      </button>
+      <button class="btn" id="exportSvgBtn" title="Download layered vector SVG for Illustrator, Figma, CorelDRAW, or Canva">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        .SVG
+      </button>
+      <button class="btn" id="exportPdfBtn" title="Open print-sized sheet to save as PDF">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        .PDF
+      </button>
+      <button class="btn btn-primary" id="exportPngBtn" title="Download high-resolution PNG (Cmd/Ctrl + E)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export .PNG
+      </button>
+      <button class="btn btn-icon" id="shortcutsBtn" title="Keyboard Shortcuts (?)">?</button>
+    </div>
+  </header>
+
+  <!-- Main Studio Workspace -->
+  <main class="workspace">
+    <aside class="sidebar">
+      <!-- Speaker Roster -->
+      <section class="roster-bar">
+        <div class="roster-header">
+          <span class="roster-label">
+            Speaker Lineup
+            <span class="roster-count" id="rosterCount">2</span>
+          </span>
+          <div class="roster-actions">
+            <button class="btn btn-sm" id="addSpeakerBtn" title="Add blank speaker slot">+ Add</button>
+            <button class="btn btn-sm" id="duplicateSpeakerBtn" title="Duplicate current speaker">Copy</button>
+            <button class="btn btn-sm" id="importCsvBtn" title="Bulk import speakers from CSV">CSV</button>
+            <button class="btn btn-sm" id="exportAllBtn" title="Download PNGs for every speaker in lineup">Batch</button>
+            <input type="file" id="csvFileInput" accept=".csv" hidden />
+          </div>
+        </div>
+        <div class="speaker-chips" id="speakerList"></div>
+      </section>
+
+      <!-- Editor Sub-Tabs -->
+      <div class="panel-tabs">
+        <button class="panel-tab active" data-tab="tabContent">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          Speaker Info
+        </button>
+        <button class="panel-tab" data-tab="tabPhoto">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Portrait Studio
+        </button>
+        <button class="panel-tab" data-tab="tabStyle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Style &amp; Print
+        </button>
+      </div>
+
+      <div class="panel-body">
+        <!-- TAB 1: SPEAKER & EVENT INFO -->
+        <div class="tab-pane active" id="tabContent">
+          <div class="control-group">
+            <div class="group-title">
+              <span>Speaker Details</span>
+              <div style="display:flex;gap:5px;">
+                <button class="btn btn-sm" id="clearSpeakerBtn" title="Clear text fields">Clear</button>
+                <button class="btn btn-sm" id="resetDemoBtn" title="Restore showcase demo speakers">Reset Demo</button>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field-label" for="speakerName">
+                <span>Speaker Name</span>
+                <span class="field-val">Enter = line break</span>
+              </label>
+              <textarea id="speakerName" rows="3" placeholder="Dr. / Mr. / Ms.&#10;First Name&#10;Last Name"></textarea>
+            </div>
+
+            <div class="field">
+              <label class="field-label" for="speakerBio">
+                <span>Bio / Credentials</span>
+                <span class="field-val" id="bioCharCount">0 chars</span>
+              </label>
+              <textarea id="speakerBio" rows="5" placeholder="Short speaker introduction, role, and key achievements..."></textarea>
+            </div>
+
+            <div class="row-2">
+              <div class="field">
+                <label class="field-label" for="badgeRole"><span>Role Tag</span></label>
+                <input type="text" id="badgeRole" value="SPEAKER" placeholder="SPEAKER / CREW" />
+              </div>
+              <div class="field">
+                <label class="field-label" for="talkTitle"><span>Talk / Theme Line</span></label>
+                <input type="text" id="talkTitle" value="" placeholder="Optional talk title" />
+              </div>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <div class="group-title">TEDx Event Lockup</div>
+            <div class="row-2">
+              <div class="field">
+                <label class="field-label" for="orgLine1"><span>Institution / Line 1</span></label>
+                <input type="text" id="orgLine1" value="CS Academy" />
+              </div>
+              <div class="field">
+                <label class="field-label" for="orgLine2"><span>City / Line 2</span></label>
+                <input type="text" id="orgLine2" value="Coimbatore" />
+              </div>
+            </div>
+
+            <label class="checkbox-row">
+              <span>Show Role Pill on All Formats</span>
+              <input type="checkbox" id="showRoleOnAll" />
+            </label>
+
+            <label class="checkbox-row">
+              <span>Official TEDx License Footer Line</span>
+              <input type="checkbox" id="showTedFooter" />
+            </label>
+          </div>
+        </div>
+
+        <!-- TAB 2: PORTRAIT & BLENDING -->
+        <div class="tab-pane" id="tabPhoto">
+          <div class="control-group">
+            <div class="group-title">Speaker Headshot</div>
+            <div class="dropzone" id="photoDropzone">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <div class="dropzone-title">Drop Speaker Photo or Click to Browse</div>
+              <div class="dropzone-hint">JPG, PNG, or WebP • Auto-clipped &amp; vignetted into lower arc</div>
+              <input type="file" id="photoInput" accept="image/*" hidden />
+            </div>
+            <div class="row-2">
+              <button class="btn btn-sm" id="resetPhotoTransformBtn">Center Portrait (R)</button>
+              <button class="btn btn-sm" id="removePhotoBtn">Clear Photo</button>
+            </div>
+            <p class="helper-note">Drag directly on the canvas to pan, scroll over the canvas to zoom, or use Arrow keys for fine nudges.</p>
+          </div>
+
+          <div class="control-group">
+            <div class="group-title">TEDx Studio B&amp;W &amp; Vignette</div>
+
+            <label class="checkbox-row">
+              <span>Monochrome Studio B&amp;W Grade</span>
+              <input type="checkbox" id="photoGrayscale" checked />
+            </label>
+
+            <div class="field">
+              <div class="field-label">
+                <span>Edge &amp; Shoulder Vignette Fade</span>
+                <span class="field-val" id="photoFeatherVal">48%</span>
+              </div>
+              <input type="range" id="photoFeather" min="0" max="100" value="48" />
+            </div>
+
+            <div class="field">
+              <div class="field-label">
+                <span>Bright Background Knock-Out</span>
+                <span class="field-val" id="photoBgKeyVal">0%</span>
+              </div>
+              <input type="range" id="photoBgKey" min="0" max="95" value="0" />
+            </div>
+
+            <div class="field">
+              <div class="field-label">
+                <span>Contrast</span>
+                <span class="field-val" id="photoContrastVal">116%</span>
+              </div>
+              <input type="range" id="photoContrast" min="75" max="180" value="116" />
+            </div>
+
+            <div class="field">
+              <div class="field-label">
+                <span>Brightness</span>
+                <span class="field-val" id="photoBrightnessVal">102%</span>
+              </div>
+              <input type="range" id="photoBrightness" min="60" max="150" value="102" />
+            </div>
+          </div>
+
+          <div class="control-group">
+            <div class="group-title">Transform</div>
+            <div class="field">
+              <div class="field-label">
+                <span>Portrait Scale</span>
+                <span class="field-val" id="photoScaleVal">100%</span>
+              </div>
+              <input type="range" id="photoScale" min="35" max="240" value="100" />
+            </div>
+            <div class="row-2">
+              <div class="field">
+                <div class="field-label">
+                  <span>Pan X</span>
+                  <span class="field-val" id="photoXVal">0%</span>
+                </div>
+                <input type="range" id="photoX" min="-80" max="80" value="0" />
+              </div>
+              <div class="field">
+                <div class="field-label">
+                  <span>Pan Y</span>
+                  <span class="field-val" id="photoYVal">0%</span>
+                </div>
+                <input type="range" id="photoY" min="-80" max="80" value="0" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: GEOMETRY, TYPOGRAPHY & PRINT -->
+        <div class="tab-pane" id="tabStyle">
+          <div class="control-group">
+            <div class="group-title">Architectural Arc Preset</div>
+            <div class="style-cards" id="arcPresetCards">
+              <button class="style-card active" data-preset="classic">Dual-Arc</button>
+              <button class="style-card" data-preset="spotlight">Spotlight</button>
+              <button class="style-card" data-preset="xsplit">Editorial X</button>
+            </div>
+
+            <div class="field">
+              <div class="field-label">
+                <span>Red Waist Ribbon Width</span>
+                <span class="field-val" id="waistGapVal">0</span>
+              </div>
+              <input type="range" id="waistGap" min="-35" max="45" value="0" />
+            </div>
+
+            <div class="field">
+              <div class="field-label">
+                <span>Arc Diagonal Balance</span>
+                <span class="field-val" id="arcSpinVal">0</span>
+              </div>
+              <input type="range" id="arcSpin" min="-25" max="25" value="0" />
+            </div>
+
+            <div class="field">
+              <span class="field-label"><span>Crimson Accent Palette</span></span>
+              <div class="swatches" id="colorSwatches">
+                <button class="swatch active" data-color="#EB0028" style="background:#EB0028" title="Official TED Red (#EB0028)"></button>
+                <button class="swatch" data-color="#E62B1E" style="background:#E62B1E" title="Classic TEDx Red (#E62B1E)"></button>
+                <button class="swatch" data-color="#D4001F" style="background:#D4001F" title="CMYK Flex Print Red (#D4001F)"></button>
+                <input type="color" id="customRedPicker" value="#EB0028" title="Custom Accent Color" style="width:28px;height:28px;border:none;background:none;cursor:pointer;" />
+              </div>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <div class="group-title">Typography Scale</div>
+            <div class="field">
+              <div class="field-label">
+                <span>Speaker Name Scale</span>
+                <span class="field-val" id="nameSizeVal">100%</span>
+              </div>
+              <input type="range" id="nameSize" min="60" max="145" value="100" />
+            </div>
+            <div class="field">
+              <div class="field-label">
+                <span>Bio Copy Scale</span>
+                <span class="field-val" id="bioSizeVal">100%</span>
+              </div>
+              <input type="range" id="bioSize" min="65" max="140" value="100" />
+            </div>
+          </div>
+
+          <div class="control-group">
+            <div class="group-title">Print Production Resolution</div>
+            <div class="field">
+              <label class="field-label" for="exportScaleSelect"><span>PNG Output Multiplier</span></label>
+              <select id="exportScaleSelect">
+                <option value="1">Standard Print HD (1x — 1800×3600)</option>
+                <option value="2">Ultra-HD Large Flex (2x — 3600×7200)</option>
+              </select>
+            </div>
+            <p class="helper-note">
+              Enable <strong>Print Guides (G)</strong> before sending standees to flex printers to verify the bottom 3-inch roller cassette clamp margin.
+            </p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Center Preview Stage -->
+    <section class="stage" id="canvasViewport">
+      <div class="stage-drop-overlay">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#EB0028" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <span>Drop Speaker Portrait to Blend into Lower Arc</span>
+      </div>
+
+      <div class="canvas-shell" id="canvasShell">
+        <canvas id="bannerCanvas" width="900" height="1800"></canvas>
+      </div>
+
+      <div class="stage-hud">
+        <span class="hud-status" id="safeBadge"><span class="hud-dot"></span>Print-Ready</span>
+        <span class="hud-sep"></span>
+        <span id="dimensionBadge">Standee 3 × 6 ft • 1800 × 3600 px</span>
+        <span class="hud-sep"></span>
+        <div class="hud-zoom">
+          <button class="zoom-btn" id="zoomOutBtn" title="Zoom Out">−</button>
+          <button class="zoom-btn" id="zoomResetBtn" title="Fit to Stage">Fit</button>
+          <button class="zoom-btn" id="zoomInBtn" title="Zoom In">+</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Keyboard Shortcuts Modal -->
+  <div class="modal-backdrop" id="shortcutsModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span>Studio Keyboard Shortcuts</span>
+        <button class="btn btn-sm" id="closeShortcutsBtn">Close</button>
+      </div>
+      <div class="shortcut-list">
+        <div class="shortcut-item"><span>Switch Format Presets</span><span class="kbd">1 – 6</span></div>
+        <div class="shortcut-item"><span>Toggle Print &amp; Roller Guides</span><span class="kbd">G</span></div>
+        <div class="shortcut-item"><span>Center Speaker Portrait</span><span class="kbd">R</span></div>
+        <div class="shortcut-item"><span>Nudge Portrait X / Y</span><span class="kbd">↑ ↓ ← →</span></div>
+        <div class="shortcut-item"><span>Quick Export High-Res .PNG</span><span class="kbd">⌘ / Ctrl + E</span></div>
+        <div class="shortcut-item"><span>Show / Hide Shortcuts</span><span class="kbd">?</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
